@@ -1,0 +1,1371 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LAB: Q - 임상병리 국가고시</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+            background: #f4f6fb;
+            color: #20232a;
+        }
+        button, input { font-family: inherit; }
+        button { cursor: pointer; }
+        .app {
+            max-width: 480px;
+            min-height: 100vh;
+            margin: 0 auto;
+            background: #ffffff;
+            overflow: hidden;
+        }
+        header {
+            padding: 22px 20px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #eeeeee;
+        }
+        .logo { font-size: 24px; font-weight: 800; letter-spacing: -1px; }
+        .logo span { color: #667eea; }
+        .header-right { display: flex; gap: 8px; }
+        .header-btn {
+            border: none;
+            background: #f1f3f8;
+            border-radius: 12px;
+            padding: 9px 12px;
+            font-size: 13px;
+            font-weight: 700;
+        }
+        .screen { display: none; padding-bottom: 40px; }
+        .screen.active { display: block; }
+        .section-title { font-size: 20px; font-weight: 800; margin: 28px 0 14px; }
+        .section-subtitle { font-size: 13px; color: #8b909c; margin-top: -7px; margin-bottom: 15px; }
+        .hero {
+            margin: 20px;
+            padding: 24px;
+            border-radius: 24px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.2);
+        }
+        .hero-small { font-size: 12px; font-weight: 700; opacity: 0.8; letter-spacing: 1px; }
+        .hero h1 { margin: 10px 0 8px; font-size: 25px; line-height: 1.35; }
+        .hero p { margin: 0; font-size: 14px; opacity: 0.9; }
+        .daily-info {
+            margin-top: 20px;
+            background: rgba(255,255,255,0.15);
+            padding: 14px;
+            border-radius: 15px;
+        }
+        .daily-top { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 8px; }
+        .daily-bar {
+            width: 100%; height: 7px;
+            background: rgba(255,255,255,0.25);
+            border-radius: 20px; overflow: hidden;
+        }
+        .daily-bar-fill { height: 100%; width: 0%; background: white; border-radius: 20px; }
+        .quick-start {
+            margin-top: 15px; width: 100%; border: none;
+            background: white; color: #667eea;
+            font-weight: 800; padding: 13px; border-radius: 13px;
+        }
+        .search-box { margin: 0 20px; position: relative; }
+        .search-box input {
+            width: 100%; padding: 14px 16px;
+            border: 1px solid #e4e7ee; border-radius: 14px;
+            outline: none; font-size: 14px; background: #fafbfe;
+        }
+        .search-box input:focus { border-color: #667eea; }
+        .subjects { padding: 0 20px; }
+        .subject-card {
+            width: 100%; border: 1px solid #e9ebf1;
+            background: white; border-radius: 20px;
+            padding: 18px; margin-bottom: 12px;
+            text-align: left; transition: 0.15s;
+        }
+        .subject-card:hover { transform: translateY(-2px); box-shadow: 0 7px 18px rgba(0,0,0,0.06); }
+        .subject-header { display: flex; align-items: center; gap: 13px; }
+        .subject-icon {
+            width: 48px; height: 48px; border-radius: 15px;
+            background: #f0f2ff; display: flex;
+            align-items: center; justify-content: center; font-size: 24px;
+        }
+        .subject-name { font-size: 17px; font-weight: 800; }
+        .subject-desc { font-size: 12px; color: #9297a3; margin-top: 4px; }
+        .progress-info {
+            display: flex; justify-content: space-between;
+            margin-top: 15px; font-size: 11px; color: #8d929d;
+        }
+        .progress { height: 6px; background: #edf0f5; border-radius: 20px; margin-top: 7px; overflow: hidden; }
+        .progress-fill { height: 100%; width: 0%; background: #667eea; border-radius: 20px; }
+        .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 0 20px; }
+        .menu-card { border: none; background: #f7f8fc; border-radius: 18px; padding: 18px; text-align: left; }
+        .menu-icon { font-size: 22px; margin-bottom: 10px; }
+        .menu-title { font-weight: 800; font-size: 14px; }
+        .menu-desc { color: #8d929d; font-size: 11px; margin-top: 5px; }
+        .back-btn {
+            margin: 18px 20px 5px; border: none; background: transparent;
+            padding: 0; font-size: 14px; font-weight: 700; color: #666;
+        }
+        .mode-title { padding: 0 20px; margin-top: 22px; }
+        .mode-title h1 { margin: 0; font-size: 25px; }
+        .mode-title p { color: #9095a0; font-size: 13px; margin-top: 8px; }
+        .mode-list { padding: 15px 20px; }
+        .mode-card {
+            width: 100%; border: 1px solid #e8eaf0; background: white;
+            border-radius: 20px; padding: 20px; margin-bottom: 12px;
+            text-align: left; display: flex; align-items: center; gap: 15px;
+        }
+        .mode-icon {
+            width: 48px; height: 48px; border-radius: 15px; background: #f1f3ff;
+            display: flex; align-items: center; justify-content: center; font-size: 22px;
+        }
+        .mode-name { font-weight: 800; font-size: 15px; }
+        .mode-desc { margin-top: 5px; color: #9196a2; font-size: 12px; }
+        .quiz-screen { min-height: 100vh; }
+        .quiz-top { padding: 18px 20px 12px; display: flex; align-items: center; justify-content: space-between; }
+        .quiz-left { display: flex; align-items: center; gap: 10px; }
+        .quiz-exit {
+            border: none; background: #f2f3f7; padding: 9px 12px;
+            border-radius: 11px; font-size: 12px; font-weight: 700;
+        }
+        .quiz-subject { font-size: 13px; font-weight: 800; color: #667eea; }
+        .question-number { font-size: 13px; color: #858b97; font-weight: 700; }
+        .quiz-progress { height: 6px; background: #eceef4; margin: 0 20px; border-radius: 20px; overflow: hidden; }
+        .quiz-progress-fill { height: 100%; width: 0%; background: #667eea; border-radius: 20px; transition: 0.2s; }
+        .question-area { padding: 28px 20px 10px; }
+        .question-area h2 { font-size: 19px; line-height: 1.5; margin: 0; word-break: keep-all; white-space: pre-line; }
+        .options { padding: 18px 20px; }
+        .option {
+            width: 100%; padding: 15px; margin-bottom: 10px; background: white;
+            border: 1px solid #e3e6ed; border-radius: 15px; text-align: left;
+            font-size: 14px; line-height: 1.4;
+        }
+        .option:hover { border-color: #667eea; }
+        .option.correct { border-color: #4caf50; background: #effaf1; }
+        .option.wrong { border-color: #f44336; background: #fff2f2; }
+        .option.disabled { cursor: default; }
+        .explanation {
+            display: none; margin: 5px 20px 20px; padding: 18px;
+            border-radius: 16px; background: #f6f7fb;
+        }
+        .explanation.show { display: block; }
+        .answer-status { font-size: 15px; font-weight: 800; margin-bottom: 8px; }
+        .answer-status.correct-text { color: #2e8b3c; }
+        .answer-status.wrong-text { color: #d93636; }
+        .explanation-text { font-size: 13px; line-height: 1.6; color: #555b67; }
+        .next-btn {
+            width: calc(100% - 40px); margin: 0 20px; padding: 15px; border: none;
+            border-radius: 14px; background: #667eea; color: white;
+            font-weight: 800; font-size: 14px;
+        }
+        .next-btn:disabled { background: #d8dbe4; cursor: default; }
+        .result { text-align: center; padding: 70px 25px 30px; }
+        .result-icon { font-size: 55px; }
+        .result h1 { font-size: 28px; margin: 15px 0 8px; }
+        .result-score { font-size: 48px; font-weight: 900; color: #667eea; margin: 25px 0; }
+        .result p { color: #858b96; font-size: 14px; }
+        .result-buttons { margin-top: 35px; }
+        .result-buttons button {
+            width: 100%; padding: 15px; border-radius: 14px;
+            border: none; margin-bottom: 10px; font-weight: 800;
+        }
+        .primary-btn { background: #667eea; color: white; }
+        .secondary-btn { background: #f0f2f7; color: #333; }
+        .page-title { padding: 25px 20px 5px; }
+        .page-title h1 { margin: 0; font-size: 25px; }
+        .page-title p { margin-top: 8px; color: #9297a2; font-size: 13px; }
+        .wrong-tabs { display: flex; gap: 8px; padding: 18px 20px 10px; overflow-x: auto; }
+        .wrong-tab {
+            border: none; background: #f0f2f7; color: #737985;
+            padding: 10px 15px; border-radius: 20px; font-size: 12px;
+            font-weight: 800; white-space: nowrap;
+        }
+        .wrong-tab.active { background: #667eea; color: white; }
+        .wrong-list { padding: 10px 20px; }
+        .wrong-card { border: 1px solid #e8eaf0; border-radius: 18px; padding: 17px; margin-bottom: 12px; }
+        .wrong-subject {
+            display: inline-block; font-size: 11px; font-weight: 800;
+            color: #667eea; background: #f0f2ff; padding: 5px 8px;
+            border-radius: 8px; margin-bottom: 10px;
+        }
+        .wrong-question { font-size: 14px; font-weight: 700; line-height: 1.5; white-space: pre-line; }
+        .wrong-answer { margin-top: 10px; font-size: 12px; color: #666c78; line-height: 1.5; }
+        .remove-wrong {
+            margin-top: 12px; border: none; background: #f3f4f7;
+            border-radius: 9px; padding: 7px 10px; font-size: 11px;
+        }
+        .empty { text-align: center; padding: 70px 20px; color: #9ba0aa; }
+        .empty-icon { font-size: 40px; margin-bottom: 15px; }
+        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 20px; }
+        .stat-card { background: #f7f8fc; border-radius: 17px; padding: 18px 10px; text-align: center; }
+        .stat-number { font-size: 21px; font-weight: 900; }
+        .stat-label { margin-top: 6px; color: #9297a2; font-size: 11px; }
+        .my-section { padding: 0 20px; }
+        .my-subject { padding: 18px; border: 1px solid #e9ebf0; border-radius: 18px; margin-bottom: 12px; }
+        .my-subject-top { display: flex; justify-content: space-between; font-weight: 800; font-size: 14px; }
+        .reset-btn {
+            width: calc(100% - 40px); margin: 20px; padding: 14px;
+            border: none; background: #f1f2f5; border-radius: 14px;
+            color: #777c86; font-weight: 700;
+        }
+        .toast {
+            position: fixed; left: 50%; bottom: 25px; transform: translateX(-50%);
+            background: #252830; color: white; padding: 12px 17px;
+            border-radius: 12px; font-size: 12px; opacity: 0;
+            pointer-events: none; transition: 0.25s; z-index: 100;
+        }
+        .toast.show { opacity: 1; }
+        @media (min-width: 481px) {
+            body { padding: 20px 0; }
+            .app { min-height: calc(100vh - 40px); border-radius: 25px; box-shadow: 0 10px 40px rgba(0,0,0,0.08); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app">
+
+    <!-- HOME SCREEN -->
+    <div id="homeScreen" class="screen active">
+        <header>
+            <div class="logo">하지<span>  </span></div>
+            <div class="header-right">
+                <button class="header-btn" onclick="showWrongNotebook()">오답</button>
+                <button class="header-btn" onclick="showMyPage()">MY</button>
+            </div>
+        </header>
+
+        <div class="hero">
+            <div class="hero-small">TODAY'S STUDY</div>
+            <h1>오늘도 전공 공부<br>해볼까요?</h1>
+            <p>전 과목 기출에서 랜덤으로 5문제를 풀어보세요.</p>
+            <div class="daily-info">
+                <div class="daily-top">
+                    <span>오늘의 목표</span>
+                    <span id="dailyCount">0 / 5</span>
+                </div>
+                <div class="daily-bar">
+                    <div id="dailyBarFill" class="daily-bar-fill"></div>
+                </div>
+                <button class="quick-start" onclick="startDailyQuiz()">오늘의 5문제 시작 →</button>
+            </div>
+        </div>
+
+        <div class="section-title" style="padding:0 20px;">과목 선택</div>
+        <div class="search-box">
+            <input id="searchInput" type="text" placeholder="과목 검색 (예: 혈액학, 법규, 화학, 미생물...)" oninput="searchSubjects()">
+        </div>
+        <div class="section-subtitle" style="padding:0 20px; margin-top:14px;">
+            단일 과목별로 기출문제를 선택해서 공부해보세요.
+        </div>
+
+        <!-- JS에서 자동 생성 -->
+        <div id="subjectList" class="subjects"></div>
+
+        <div class="section-title" style="padding:0 20px;">바로가기</div>
+        <div class="menu-grid">
+            <button class="menu-card" onclick="showWrongNotebook()">
+                <div class="menu-icon">📕</div>
+                <div class="menu-title">오답노트</div>
+                <div class="menu-desc">틀린 문제 다시 보기</div>
+            </button>
+            <button class="menu-card" onclick="showMyPage()">
+                <div class="menu-icon">📊</div>
+                <div class="menu-title">학습 기록</div>
+                <div class="menu-desc">나의 공부 기록 확인</div>
+            </button>
+        </div>
+    </div>
+
+    <!-- MODE SCREEN -->
+    <div id="modeScreen" class="screen">
+        <button class="back-btn" onclick="goHome()">← 홈으로</button>
+        <div class="mode-title">
+            <h1 id="modeSubjectTitle">과목명</h1>
+            <p>원하는 학습 방법을 선택하세요.</p>
+        </div>
+        <div class="mode-list">
+            <button class="mode-card" onclick="startQuiz('basic')">
+                <div class="mode-icon">📖</div>
+                <div>
+                    <div class="mode-name">기본 학습</div>
+                    <div class="mode-desc">문제를 순서대로 풀면서 해설을 확인해요.</div>
+                </div>
+            </button>
+            <button class="mode-card" onclick="startQuiz('random')">
+                <div class="mode-icon">🎲</div>
+                <div>
+                    <div class="mode-name">랜덤 퀴즈</div>
+                    <div class="mode-desc">문제 순서를 랜덤으로 섞어서 풀어요.</div>
+                </div>
+            </button>
+            <button class="mode-card" onclick="startQuiz('wrong')">
+                <div class="mode-icon">📕</div>
+                <div>
+                    <div class="mode-name">오답 복습</div>
+                    <div class="mode-desc">틀렸던 문제만 다시 풀어봐요.</div>
+                </div>
+            </button>
+        </div>
+    </div>
+
+    <!-- QUIZ SCREEN -->
+    <div id="quizScreen" class="screen quiz-screen">
+        <div class="quiz-top">
+            <div class="quiz-left">
+                <button class="quiz-exit" onclick="exitQuiz()">← 나가기</button>
+                <div id="quizSubject" class="quiz-subject">과목</div>
+            </div>
+            <div id="questionNumber" class="question-number">1 / 20</div>
+        </div>
+        <div class="quiz-progress">
+            <div id="quizProgressFill" class="quiz-progress-fill"></div>
+        </div>
+        <div class="question-area">
+            <h2 id="questionText">문제가 들어갑니다.</h2>
+        </div>
+        <div id="options" class="options"></div>
+        <div id="explanation" class="explanation">
+            <div id="answerStatus" class="answer-status"></div>
+            <div id="explanationText" class="explanation-text"></div>
+        </div>
+        <button id="nextButton" class="next-btn" onclick="nextQuestion()" disabled>정답을 선택해주세요</button>
+    </div>
+
+    <!-- RESULT SCREEN -->
+    <div id="resultScreen" class="screen">
+        <div class="result">
+            <div class="result-icon">🎉</div>
+            <h1>학습 완료!</h1>
+            <div id="resultScore" class="result-score">0 / 20</div>
+            <p id="resultMessage">잘했어요!</p>
+            <div class="result-buttons">
+                <button class="primary-btn" onclick="retryQuiz()">다시 풀기</button>
+                <button class="secondary-btn" onclick="goHome()">홈으로 돌아가기</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- WRONG NOTEBOOK -->
+    <div id="wrongScreen" class="screen">
+        <button class="back-btn" onclick="goHome()">← 홈으로</button>
+        <div class="page-title">
+            <h1>오답노트</h1>
+            <p>틀린 문제를 과목별로 다시 확인해보세요.</p>
+        </div>
+        <div id="wrongTabs" class="wrong-tabs"></div>
+        <div id="wrongList" class="wrong-list"></div>
+    </div>
+
+    <!-- MY PAGE -->
+    <div id="myScreen" class="screen">
+        <button class="back-btn" onclick="goHome()">← 홈으로</button>
+        <div class="page-title">
+            <h1>MY</h1>
+            <p>나의 학습 기록을 확인해보세요.</p>
+        </div>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div id="totalSolved" class="stat-number">0</div>
+                <div class="stat-label">푼 문제</div>
+            </div>
+            <div class="stat-card">
+                <div id="totalCorrect" class="stat-number">0</div>
+                <div class="stat-label">정답</div>
+            </div>
+            <div class="stat-card">
+                <div id="accuracy" class="stat-number">0%</div>
+                <div class="stat-label">정답률</div>
+            </div>
+        </div>
+        <div class="section-title" style="padding:0 20px;">과목별 기록</div>
+        <div id="mySubjectSection" class="my-section"></div>
+        <button class="reset-btn" onclick="resetAllData()">학습 기록 초기화</button>
+    </div>
+
+</div>
+
+<div id="toast" class="toast">저장되었습니다.</div>
+
+<script>
+/* =========================================================================
+   과목 설정 (단일 과목 1개씩 총 11개 카테고리)
+========================================================================= */
+const SUBJECTS = [
+    { key: "hematology", name: "혈액학", icon: "🩸", desc: "기본 + 국시 기출" },
+    { key: "physiology", name: "생리학", icon: "🫀", desc: "Physiology 기초" },
+    { key: "medicalLaw", name: "의료관계법규", icon: "⚖️", desc: "제50·51·53회 국시 1교시" },
+    { key: "publicHealth", name: "공중보건학", icon: "🏥", desc: "제50·51·53회 국시 1교시" },
+    { key: "anatomy", name: "해부생리학", icon: "🦴", desc: "제50·51·53회 국시 1교시" },
+    { key: "histopathology", name: "조직병리학", icon: "🔬", desc: "제50·51·53회 국시 1·3교시" },
+    { key: "cytopathology", name: "세포병리학", icon: "🧪", desc: "제50·51·53회 국시 1·3교시" },
+    { key: "physiologicalTest", name: "생리기능학", icon: "📈", desc: "제50·51·53회 국시 1교시" },
+    { key: "clinicalChem", name: "임상화학", icon: "⚗️", desc: "제50·51·53회 요화학·임상화학·핵의학" },
+    { key: "transfusion", name: "수혈의학", icon: "💉", desc: "제50·51·53회 혈액은행 기출" },
+    { key: "microbiology", name: "임상미생물학", icon: "🦠", desc: "제50·51·53회 세균·진균·바이러스·면역" }
+];
+
+// 단축키 포맷 [질문, [보기들], 정답인덱스(0~4), 해설]을 객체로 변환하는 헬퍼
+function buildQuestions(rawList) {
+    return rawList.map(item => ({
+        question: item[0],
+        options: item[1],
+        answer: item[2],
+        explanation: item[3]
+    }));
+}
+
+/* =========================================================================
+   전체 과목별 기출문제 데이터베이스
+========================================================================= */
+const QUESTION_BANK = {
+
+    // 1. 혈액학 (기존 20문항 + 53회 2교시 및 실기 기출)
+    hematology: buildQuestions([
+        ["혈액의 액체 성분으로 혈액세포가 떠 있는 것은?", ["혈장","혈소판","적혈구","백혈구"], 0, "혈장은 혈액의 액체 성분으로 혈액세포와 물질을 운반합니다."],
+        ["적혈구의 가장 중요한 기능은?", ["혈액 응고","산소 운반","항체 생성","식균 작용"], 1, "적혈구는 헤모글로빈을 이용해 산소를 운반합니다."],
+        ["헤모글로빈의 주요 기능은?", ["혈액 응고","산소 운반","항체 생성","호르몬 생성"], 1, "헤모글로빈은 적혈구 내에서 산소를 운반합니다."],
+        ["정상적인 적혈구의 형태는?", ["구형","양면오목 원반형","방추형","입방형"], 1, "정상 적혈구는 중앙이 오목한 양면오목 원반형입니다."],
+        ["성숙한 정상 적혈구의 특징으로 옳은 것은?", ["핵이 있다","핵과 대부분의 세포소기관이 없다","미토콘드리아가 많다","DNA 합성을 활발히 한다"], 1, "성숙 적혈구는 핵과 세포소기관이 없어 산소 운반에 특화되어 있습니다."],
+        ["골수에서 적혈구 생성 상태를 평가할 때 이용되는 세포는?", ["호중구","망상적혈구","단핵구","혈소판"], 1, "망상적혈구(그물적혈구)는 골수의 적혈구 조혈능을 반영합니다."],
+        ["다음 중 백혈구가 아닌 것은?", ["호중구","림프구","단핵구","혈소판"], 3, "혈소판은 거핵구 세포질 조각으로 지혈에 관여합니다."],
+        ["정상 말초혈액에서 가장 많은 백혈구는?", ["호산구","호염기구","호중구","단핵구"], 2, "말초혈액 백혈구 중 호중구가 50~70%로 가장 많습니다."],
+        ["호산구와 관련이 가장 큰 것은?", ["기생충 감염과 알레르기 반응","혈액 응고","산소 운반","적혈구 생성"], 0, "호산구는 기생충 감염 및 알레르기 질환에서 증가합니다."],
+        ["림프구의 주요 기능과 가장 관련 있는 것은?", ["적혈구 생성","적응면역","혈액 응고","산소 운반"], 1, "림프구(T, B세포)는 특이적 적응면역을 담당합니다."],
+        ["단핵구가 조직으로 이동한 후 분화할 수 있는 세포는?", ["대식세포","적혈구","혈소판","호산구"], 0, "단핵구는 혈중을 순환하다 조직으로 이동해 대식세포(큰포식세포)로 분화합니다."],
+        ["혈소판의 주요 기능은?", ["산소 운반","혈액 응고와 지혈","항체 생성","이산화탄소 생성"], 1, "혈소판은 1차 지혈전 형성 및 혈액 응고에 핵심적입니다."],
+        ["지혈 과정에서 혈관 손상 직후 나타나는 반응은?", ["혈관 수축","적혈구 생성","항체 생성","용혈"], 0, "혈관 손상 직후 신경성·체액성 반사로 혈관 수축이 일어납니다."],
+        ["일반적인 혈액학 검사(CBC)에서 항응고제로 가장 많이 사용되는 것은?", ["EDTA","헤파린","구연산나트륨","불화나트륨"], 0, "CBC 검사에는 혈구 형태 보존이 우수한 EDTA를 사용합니다."],
+        ["EDTA가 들어 있는 채혈관의 일반적인 마개 색은?", ["빨간색","보라색","파란색","회색"], 1, "EDTA 채혈관은 보라색(lavender) 마개를 사용합니다."],
+        ["CBC(일반혈액검사)에 포함되는 항목으로 가장 적절한 것은?", ["적혈구, 백혈구, 혈소판","혈당, 콜레스테롤, 중성지방","AST, ALT, ALP","요소, 크레아티닌, 요산"], 0, "CBC는 적혈구, 백혈구, 혈소판 수 및 적혈구 항수를 측정합니다."],
+        ["헤마토크릿(Hct)은 무엇을 의미하는가?", ["혈액 내 백혈구의 수","혈액 내 혈소판의 수","혈액에서 적혈구가 차지하는 용적 비율","혈장 단백질 농도"], 2, "전혈 중 적혈구 용적이 차지하는 백분율(%)입니다."],
+        ["MCV가 의미하는 것은?", ["평균 적혈구 용적","평균 혈소판 수","백혈구 수","헤모글로빈 농도"], 0, "MCV(Mean Corpuscular Volume)는 평균 적혈구 용적입니다."],
+        ["MCV가 감소한 빈혈은 일반적으로 어떤 형태인가?", ["대구성 빈혈","정구성 빈혈","소구성 빈혈","거대적혈구증"], 2, "MCV가 80fL 미만으로 감소하면 소구성 빈혈로 분류합니다."],
+        ["말초혈액도말검사의 주요 목적은?", ["혈액세포의 형태와 분포 관찰","혈당 측정","혈액의 pH 측정","혈압 측정"], 0, "혈구 세포의 형태학적 이상과 분포를 관찰합니다."],
+        ["G-6-PD 결핍으로 인한 혈색소의 산화적 변성물로, 초생체 염색으로 관찰 가능한 봉입체는?", ["Auer body","Döhle body","Heinz body","Russell's bodies","Pappenheimer body"], 2, "산화적 손상으로 변성된 불용성 혈색소 침전물은 하인츠 소체(Heinz body)이며 크리스탈 바이올렛 등 초생체염색으로 관찰합니다."],
+        ["저산소증에 대한 반응으로, 신장에서 합성되는 적혈구 조혈 자극인자는?", ["ferritin","fibrinogen","leukopoietin","erythropoietin","thrombopoietin"], 3, "신장의 세뇨관주위 간질세포에서 저산소 자극에 의해 에리스로포이에틴(EPO)이 분비됩니다."],
+        ["다음의 특성을 보이는 혈색소는?\n• α2γ2로 구성 • 지중해빈혈에서 증가\n• 산과 알칼리에 높은 저항성 • 정상 성인 혈액 중 1~2% 존재", ["Hb A1","Hb A2","Hb D","Hb F","Hb S"], 3, "태아혈색소(Hb F)는 α2γ2로 구성되며 알칼리 변성 저항성을 가집니다."],
+        ["파펜하이머 소체(Pappenheimer body)의 성분은?", ["리보솜","철과립","핵 잔유물","방추사 잔유물","혈색소 변성물질"], 1, "파펜하이머 소체는 적혈구 내 비헴성 철과립(무기철) 침착물입니다."],
+        ["적혈구막의 단백질 결함으로 표면적이 감소하여 저장액에서 강한 삼투압 취약성을 보이는 세포는?", ["낫적혈구","구형적혈구","분열적혈구","표적적혈구","입모양적혈구"], 1, "유전성 구형적혈구증에서는 스펙트린 등 세포막 골격단백 결함으로 구형적혈구가 나타나며 삼투압 취약성이 증가합니다."],
+        ["백혈구 성숙단계 중에서 이차 과립(특이적 과립)이 형성되며, 세포분열을 할 수 있는 마지막 단계는?", ["골수모구","전골수구","골수구","후골수구","중성구"], 2, "골수구(Myelocyte)는 2차(특이) 과립이 출현하고 세포분열이 가능한 마지막 단계입니다."],
+        ["아우어 소체(Auer body)의 설명으로 옳은 것은?", ["철과립이다.","RNA 침전물이다.","변성된 혈색소이다.","peroxidase 염색 시 양성이다.","급성림프세포백혈병(ALL)에서 발견된다."], 3, "아우어 소체는 아주르 과립이 융합된 막대 모양 구조물로 골수계(AML)에 특이적이며 MPO 및 SBB 염색에 강양성입니다."],
+        ["혈소판 고밀도과립(dense granule)에 존재하며 혈소판 응집을 촉진하는 물질은?", ["PF4","ADP","PDGF","albumin","heparin"], 1, "혈소판 고밀도과립(δ-granule)에는 ADP, ATP, 칼슘(Ca2+), 세로토닌이 들어있어 혈소판 응집을 유도합니다."],
+        ["간에서 합성되는 비타민 K 의존성 응고인자는?", ["factor I","factor II","factor III","factor V","factor VIII"], 1, "비타민 K 의존성 응고인자는 제II(프로트롬빈), VII, IX, X 인자입니다."],
+        ["혈액응고인자 중 혈장 내 농도가 가장 높으며, thrombin에 의하여 활성화되는 인자는?", ["섬유소원","프로트롬빈","이온화 칼슘","항혈우병인자 B","조직트롬보플라스틴"], 0, "제I인자인 섬유소원(Fibrinogen)은 혈장 농도가 약 200~400 mg/dL로 가장 높으며 트롬빈에 의해 섬유소(fibrin)로 전환됩니다."],
+        ["비타민B12나 엽산 결핍으로 인한 DNA합성 장애로 발생하며, 과다분엽핵중성구(hypersegmented neutrophil)가 관찰되는 질환은?", ["용혈빈혈","악성빈혈","지중해빈혈","철결핍빈혈","재생불량빈혈"], 1, "비타민 B12(내인자 결핍 시 악성빈혈)나 엽산 결핍은 거대적혈모구빈혈을 일으키며 말초혈액에 과분엽 호중구가 관찰됩니다."],
+        ["다음의 특징이 관찰되는 질환은?\n• 소구성 저색소성 적혈구 • 혈청철 감소\n• 저장철 감소 • TIBC 증가", ["악성빈혈","철결핍빈혈","엽산결핍빈혈","재생불량빈혈","거대적혈모구빈혈"], 1, "철결핍빈혈(IDA)은 소구성 저색소성 빈혈이며 혈청철과 페리틴은 감소하고 총철결합능(TIBC)은 증가합니다."],
+        ["다음 검사 결과로 예상되는 질환은?\n• 말초혈액에서 모든 성숙단계의 골수계 세포 관찰 • 호산구, 호염기구 증가\n• LAP score 감소 • 필라델피아 염색체 t(9;22), BCR/ABL1 양성", ["급성림프세포백혈병(ALL)","급성전골수세포백혈병(APL)","만성골수세포백혈병(CML)","만성림프세포백혈병(CLL)","털세포백혈병(hairy cell leukemia)"], 2, "t(9;22) 필라델피아 염색체와 LAP 점수 감소는 만성골수세포백혈병(CML)의 특징입니다."],
+        ["말초혈액도말에서 반응림프구(reactive lymphocyte)가 10% 이상 관찰되고, 혈청검사에서 엡스타인-바 바이러스(EBV)가 확인되었다. 예상되는 질환은?", ["다발골수종","감염단핵구증","재생불량빈혈","급성골수세포백혈병","만성골수세포백혈병"], 1, "EBV 감염에 의해 비정형(반응성) 림프구가 증가하는 질환은 감염단핵구증(전염성 단핵구증)입니다."],
+        ["심한 출혈을 동반한 환자의 검사 결과가 [PT-정상, aPTT-연장, 혼합 aPTT-교정]이다. 결핍이 예상되는 응고인자는?", ["factor I","factor II","factor VII","factor VIII","factor X"], 3, "내인계 경로(XII, XI, IX, VIII) 인자 결핍 시 PT는 정상이고 aPTT만 연장되며 혼합검사에서 교정됩니다."],
+        ["자동혈액분석기를 이용하여 평균적혈구용적(MCV) 측정 결과가 120 fL일 때 해석은?", ["대적혈구 증가","소적혈구 증가","변형적혈구 증가","정상적혈구 증가","거대혈소판 증가"], 0, "정상 MCV는 80~100 fL이므로 120 fL은 대적혈구(macrocyte) 증가를 의미합니다."],
+        ["한랭자가응집(cold autoagglutination)이 있는 혈액검체를 자동혈액분석기로 측정했을 때 나타날 수 있는 현상은?", ["적혈구 수 감소","중성구 수 감소","호산구 수 감소","혈소판 수 증가","호염기구 수 증가"], 0, "적혈구끼리 응집덩어리를 형성하여 큰 1개의 세포로 인식되므로 적혈구 수(RBC)와 Hct는 거짓 감소하고 MCV, MCHC는 거짓 상승합니다."],
+        ["혈색소의 글로빈사슬 중 β-사슬의 6번째 아미노산인 글루탐산이 발린으로 치환되어 낫적혈구빈혈을 일으키는 이상혈색소는?", ["Hb C","Hb D","Hb E","Hb H","Hb S"], 4, "낫적혈구빈혈(겸상적혈구빈혈)의 원인 혈색소는 Hb S입니다."],
+        ["혈액질환을 진단하기 위해 글리코겐을 포함한 다당류를 염색하는 세포화학염색법은?", ["iron 염색","Sudan black B(SBB) 염색","myeloperoxidase(MPO) 염색","periodic acid Schiff(PAS) 염색","non-specific esterase(NSE) 염색"], 3, "PAS 염색은 세포질 내 글리코겐 등 다당류를 적자색으로 염색하며 급성림프모구백혈병(ALL)과 적백혈병(M6) 진단에 유용합니다."],
+        ["말초혈액 도말표본 현미경 관찰에서 모세포(blast)가 다수 관찰되어 급성백혈병이 의심된다면 추가로 시행할 검사는?", ["햄 검사(Ham test)","실링 검사(Schilling test)","혈색소 전기영동","골수 검사(bone marrow examination)","삼투압 취약성 검사"], 3, "급성백혈병의 확진을 위해서는 골수 천자 및 생검(골수 검사)을 시행해야 합니다."],
+        ["섬유소원에서 섬유소로 전환되는 시간을 측정하는 검사는?", ["Bleeding time(BT)","Thrombin time(TT)","Stypven time(DRVVT)","Prothrombin time(PT)","aPTT"], 1, "트롬빈 시간(TT)은 혈장에 트롬빈을 첨가하여 섬유소원이 섬유소로 전환되는 시간을 측정합니다."],
+        ["PT 검사는 정상, aPTT 검사는 연장되어 혼합검사(mixing test)를 시행하였다. aPTT 결과가 교정되지 않았을 경우 적절한 해석은?", ["V 인자 결핍","VII 인자 결핍","X 인자 결핍","루푸스항응고 인자 존재","본빌레브란드 인자 결핍"], 3, "혼합검사 후에도 교정되지 않으면 순환성 항응고물질(억제인자, 예: 루푸스항응고인자)이 존재하는 것입니다."],
+        ["흐름세포분석기(flow cytometry)를 사용한 면역표현형검사에서 CD34 양성 결과를 확인하였다면 추측할 수 있는 세포는?", ["B 림프구","T 림프구","대식세포","형질세포","조혈줄기세포"], 4, "CD34는 조혈모세포(조혈줄기세포, HSC) 및 미성숙 전구세포의 대표적 표지자입니다."],
+        ["만성골수구백혈병(CML)과 백혈병모양반응(leukemoid reaction) 질환을 감별하기 위해 점수를 산정하여 진단에 활용하는 염색은?", ["SBB","ACP","PAS","NSE","LAP(leukocyte alkaline phosphatase)"], 4, "LAP 염색 점수는 CML에서 현저히 감소하고 백혈병모양반응에서는 증가합니다."],
+        ["혈액응고검사 결과 PT 연장, aPTT 정상이다. 결핍이 의심되는 응고인자는?", ["VII (proconvertin)","VIII (antihemophilic factor A)","IX (antihemophilic factor B)","XI","XII (Hageman factor)"], 0, "PT만 단독으로 연장된 경우 외인계 경로의 제VII인자 결핍을 의심합니다."]
+    ]),
+
+    // 2. 생리학 (기존 20문항)
+    physiology: buildQuestions([
+        ["인체에서 산소와 이산화탄소의 교환이 주로 일어나는 곳은?", ["기관","폐포","후두","식도"], 1, "폐포와 모세혈관 사이에서 기체교환이 일어납니다."],
+        ["심장의 우심방으로 들어오는 혈액은 주로 어디에서 오는가?", ["폐정맥","대동맥","대정맥","폐동맥"], 2, "상·하대정맥을 통해 전신의 정맥혈이 우심방으로 유입됩니다."],
+        ["심장의 좌심실에서 혈액이 나가는 혈관은?", ["폐동맥","대동맥","상대정맥","폐정맥"], 1, "좌심실은 대동맥을 통해 전신으로 동맥혈을 박출합니다."],
+        ["심장 박동을 시작하는 정상적인 일차적 박동조율기는?", ["방실결절","동방결절","히스속","푸르키녜 섬유"], 1, "동방결절(SA node)이 정상 심장의 자동능 향도잡이입니다."],
+        ["혈압을 결정하는 주요 요인으로 가장 적절한 것은?", ["심박출량과 말초혈관저항","체온과 산소포화도","혈액형과 체온","호흡수와 체온"], 0, "혈압 = 심박출량 × 총말초혈관저항입니다."],
+        ["심박출량(CO)은 무엇과 무엇의 곱인가?", ["심박수 × 1회박출량","혈압 × 혈류량","호흡수 × 1회호흡량","맥박 × 혈압"], 0, "심박출량(CO) = 심박수(HR) × 1회박출량(SV)입니다."],
+        ["신장의 가장 중요한 기능 중 하나는?", ["혈액의 산소 운반","체액과 전해질 조절","음식물의 소화","담즙 생성"], 1, "신장은 노폐물 배설 및 체액·전해질·산염기 평형을 조절합니다."],
+        ["소변이 처음 만들어지는 기본적인 구조적·기능적 단위는?", ["폐포","네프론","뉴런","사구체만"], 1, "네프론(콩팥단위)은 신장의 구조적·기능적 기본단위입니다."],
+        ["사구체에서 일어나는 주요 과정은?", ["여과","소화","산소 운반","혈액 응고"], 0, "사구체 모세혈관에서 보우만주머니로 혈장 성분의 여과가 일어납니다."],
+        ["ADH(항이뇨호르몬)의 주요 기능은?", ["수분 재흡수 증가","혈당 감소","심박수 감소","산소 운반 증가"], 0, "뇌하수체 후엽에서 분비되는 ADH는 집합관에서 수분 재흡수를 촉진합니다."],
+        ["인슐린의 주요 작용은?", ["혈당 상승","혈당 감소","혈압 상승","체온 상승"], 1, "인슐린은 세포 내 포도당 유입과 글리코겐 합성을 촉진해 혈당을 낮춥니다."],
+        ["글루카곤의 주요 작용은?", ["혈당 감소","혈당 상승","체온 감소","혈액 응고 억제"], 1, "글루카곤은 간에서 글리코겐 분해와 포도당신생을 촉진해 혈당을 높입니다."],
+        ["갑상샘 호르몬의 주요 기능과 관련 있는 것은?", ["기초대사 조절","혈액 응고","소변 저장","청각 조절"], 0, "갑상샘 호르몬(T3, T4)은 기초대사율을 높이고 열 생산을 증가시킵니다."],
+        ["교감신경이 활성화되었을 때 일반적으로 나타나는 반응은?", ["심박수 증가","심박수 감소","동공 수축","소화활동 증가"], 0, "교감신경 흥분 시 심박수 증가, 기관지 확장, 동공 확대가 나타납니다."],
+        ["부교감신경의 기능과 가장 관련 있는 것은?", ["휴식과 소화","심박수 증가","동공 확대","혈당 급격한 상승"], 0, "부교감신경은 에너지를 보존하고 소화관 운동과 분비를 촉진합니다."],
+        ["호흡 운동에서 횡격막이 수축하면 어떻게 되는가?", ["흉강 용적이 감소한다","흉강 용적이 증가한다","폐가 수축한다","공기가 밖으로 나간다"], 1, "횡격막 수축 시 아래로 하강하여 흉강 용적이 커지고 흡기가 일어납니다."],
+        ["혈액의 정상적인 pH를 유지하는 데 가장 직접적으로 관여하는 기관은?", ["폐와 신장","위와 췌장","피부와 눈","담낭과 비장"], 0, "폐(CO2 조절)와 신장(H+, HCO3- 조절)이 산-염기 평형을 담당합니다."],
+        ["체온 조절의 중추로 알려진 뇌 부위는?", ["시상하부","소뇌","연수","해마"], 0, "시상하부(Hypothalamus)에 체온조절 중추가 위치합니다."],
+        ["뉴런에서 활동전위가 발생하는 데 중요한 이온은?", ["나트륨 이온","철 이온","칼슘 이온만","요오드 이온"], 0, "전압개폐성 Na+ 통로가 열려 나트륨 이온이 세포 내로 유입되면서 탈분극이 일어납니다."],
+        ["항상성(homeostasis)이란 무엇인가?", ["외부 환경이 항상 일정한 상태","체내 환경을 일정한 범위로 유지하는 능력","심장 박동이 멈추는 상태","혈액이 응고되는 과정"], 1, "생체가 내부 환경을 일정하게 유지하려는 조절 기능입니다."]
+    ]),
+
+    // 3. 의료관계법규 (50회 20문항 + 51회 20문항 + 53회 20문항 = 60문항)
+    medicalLaw: buildQuestions([
+        ["「의료법」상 의료인의 실태와 취업상황 등을 누구에게 신고하여야 하는가?", ["보건소장","시·도지사","의료기관의 장","보건복지부장관","시장·군수·구청장"], 3, "의료인은 3년마다 보건복지부장관에게 실태와 취업상황을 신고해야 합니다."],
+        ["「의료법」상 의료인의 의무 중 처방전에 관한 설명으로 옳지 않은 것은?", ["의사, 치과의사, 한의사만 처방전을 환자에게 교부할 수 있다.","어떠한 경우라도 환자의 처방전을 환자를 대리하여 수령할 수 없다.","처방전의 작성 시 환자가 요구하면 질병분류기호는 적지 않을 수 있다.","누구든지 정당한 사유없이 전자처방전에 저장된 개인정보를 탐지하거나 누출·변조 또는 훼손할 수 없다.","의사는 환자를 치료하기 위하여 필요한 경우 다음 내원일에 사용할 의약품에 대하여 미리 처방전을 발급할 수 있다."], 1, "환자가 의식이 없거나 거동이 현저히 곤란한 경우 대리 수령이 가능한 예외가 있습니다."],
+        ["「의료법」상 300병상을 초과하는 종합병원에 반드시 설치하여야 하는 진료과목이 아닌 것은?", ["비뇨기과","영상의학과","소아청소년과","마취통증의학과","정신건강의학과"], 0, "300병상 초과 종합병원 필수 9개 과목에 비뇨의학과는 포함되지 않습니다."],
+        ["「의료법」상 의료인의 면허취소사유 중 반드시 취소하여야 하는 경우는?", ["면허증을 빌려준 경우","피한정후견인이 된 경우","면허의 조건을 이행하지 않은 경우","자격정지 처분기간 중 의료행위를 한 경우","3회 이상 면허자격 정지 처분을 받은 경우"], 1, "결격사유(피성년·피한정후견인 등), 면허 대여, 자격정지 중 의료행위, 3회 이상 자격정지 등은 필요적 취소사유이며 국시원 최종답안은 2번입니다."],
+        ["「의료기사 등에 관한 법률」상 임상병리사의 구체적인 업무 범위로 옳지 않은 것은?", ["검사용 시약의 조제","검사물 등의 채취·검사","진단용 시약의 제조 및 판매","기계·기구·시약 등의 보관·관리·사용","혈액의 채혈·제제·제조·조작·보존·공급"], 2, "진단용 시약의 제조 및 판매는 임상병리사의 업무 범위가 아닙니다."],
+        ["「의료기사 등에 관한 법률」상 면허없이 의료기사등의 업무를 수행할 수 있는 자는?", ["면허증은 없으나 의료기사업무에 숙달된 자","면허 없이 보건복지부장관이 지정한 기관에서 수습중인 자","면허증을 대여 받아 의료기사등의 업무를 수행하는 자","면허 없이 의료기사의 지도하에 의료기사 업무를 수행하는 자","대학등에서 해당면허 취득을 위한 교육과정 이수를 위해 실습 중인 자"], 4, "면허 취득을 위한 교육과정 이수를 위해 대학 등에서 실습 중인 자는 예외적으로 허용됩니다."],
+        ["「의료기사 등에 관한 법률」상 의료기사가 3회 이상의 면허 자격정지를 당하여 면허가 취소된 경우, 면허 재발급을 위해 취소된 날로부터 얼마간의 기간이 필요한가?", ["6개월","1년","2년","3년","5년"], 1, "3회 이상 자격정지로 면허가 취소된 경우 취소된 날부터 1년 이내에는 재발급받을 수 없습니다(국시원 제50회 최종답안 2번: 1년)."],
+        ["「의료기사 등에 관한 법률」상 의료기사등의 보수교육에 대한 설명 중 옳은 것은?", ["보수교육 관계서류는 5년간 보존하여야 한다.","보수교육시간은 매년 8시간 이상 받아야 한다.","보수교육실적보고는 시·도지사에게 보고한다.","보수교육이수증은 보건복지부장관이 발급한다.","보수교육이 3년 이상 유예된 경우 12시간 이상 보수교육을 받아야 한다."], 1, "보수교육은 매년 8시간 이상 이수해야 합니다. (3년 이상 유예 시 20시간 이상, 서류보존은 3년)"],
+        ["「의료기사 등에 관한 법률」상 의료기사등의 실태와 취업상황을 허위로 신고한 사람에게 부과하는 처분으로 옳은 것은?", ["100만원 이하의 과태료","500만원 이하의 과태료","500만원 이하의 벌금","1년 이하의 징역 또는 1천만원 이하의 벌금","3년 이하의 징역 또는 3천만원 이하의 벌금"], 0, "실태와 취업상황을 거짓으로 신고한 자에게는 100만원 이하의 과태료를 부과합니다."],
+        ["「감염병의 예방 및 관리에 관한 법률」상 '감염병의심자'에 대한 정의로 옳지 않은 것은?", ["감염병환자와 접촉하거나 접촉이 의심되는 사람","감염병의사환자와 접촉하거나 접촉이 의심되는 사람","감염병 병원체 등 위험요인에 노출되어 감염이 우려되는 사람","임상적인 증상은 없으나 감염병 병원체를 보유하고 있는 사람","검역관리지역 또는 중점검역관리지역을 경유한 사람으로서 감염이 우려되는 사람"], 3, "임상 증상 없이 병원체를 보유한 사람은 '병원체보유자'입니다."],
+        ["「감염병의 예방 및 관리에 관한 법률」상 감염병 표본감시기관인 의료기관의 장은 4급감염병 환자 발생 시 보건소장에게 며칠 이내에 신고하여야 하는가?", ["1일","3일","5일","7일","9일"], 3, "제4급감염병은 발생 후 7일 이내에 신고하여야 합니다."],
+        ["「감염병의 예방 및 관리에 관한 법률」상 보건소를 이용하기 불편한 주민 등에 대한 예방접종업무를 의료기관에 위탁할 수 있는 자는?", ["보건소장","시·도지사","질병관리청장","보건복지부장관","특별자치도지사 또는 시장·군수·구청장"], 4, "특별자치도지사 또는 시장·군수·구청장이 관할 의료기관에 위탁할 수 있습니다."],
+        ["「감염병의 예방 및 관리에 관한 법률」상 고위험병원체를 보유·관리하는 자는 매년 보유현황 기록을 작성하여 누구에게 제출하여야 하는가?", ["보건소장","시·도지사","질병관리청장","보건복지부장관","시장·군수·구청장"], 2, "고위험병원체 보유현황은 매년 질병관리청장에게 제출합니다."],
+        ["「지역보건법」상 보건소의 업무범위 중 지역주민의 건강증진 및 질병예방·관리를 위한 지역보건의료 서비스로 옳지 않은 것은?", ["감염병의 예방 및 관리","모성과 영유아의 건강유지·증진","청소년 선도 및 학교보건에 관한 사항","정신건강증진 및 생명존중에 관한 사항","여성·노인·장애인 등 보건의료 취약계층의 건강유지·증진"], 2, "청소년 선도 및 학교보건에 관한 사항은 보건소의 업무가 아닙니다."],
+        ["「지역보건법」상 보건등 직렬의 공무원을 보건소장으로 임용하는 경우 최근 최소 몇 년 이상 보건등의 업무와 관련된 근무경험이 있는 자로 하여야 하는가?", ["1년 이상","3년 이상","5년 이상","7년 이상","9년 이상"], 2, "임용 전 최근 5년 이상 보건 등의 업무와 관련하여 근무한 경험이 있는 사람으로 임용하여야 합니다(제50회 국시원 최종답안 3번: 5년 이상)."],
+        ["「지역보건법」상 건강검진 등 신고서를 제출받은 보건소장은 신고인에게 신고의 수리 여부를 언제까지 통지하여야 하는가?", ["지체없이","3일 이내","5일 이내","7일 이내","9일 이내"], 3, "신고를 받은 날부터 7일 이내에 통지하여야 합니다."],
+        ["「혈액관리법」상 혈액원에서 수행하는 혈액관리업무로 옳지 않은 것은?", ["채혈 업무","혈액제제의 공급 업무","혈액제제의 판매 업무","혈액제제의 보존 업무","혈액제제의 품질관리 업무"], 2, "혈액제제의 판매 업무는 혈액관리업무에 해당하지 않습니다."],
+        ["「혈액관리법」상 혈액관리업무를 할 수 있는 자 중 채혈업무를 할 수 없는 자는?", ["의원","병원","종합병원","대한적십자사","혈액제제 제조업자"], 4, "혈액제제 제조업자는 채혈업무를 제외한 혈액관리업무만 가능합니다."],
+        ["「혈액관리법」상 부적격 혈액·혈액제제에 해당하는 것은?", ["매독검사 결과 음성인 혈액","C형 간염검사결과 음성인 혈액","후천성면역결핍증 검사결과 음성인 혈액","사람T세포림프친화바이러스(HTLV) 검사결과 음성인 혈액","간기능검사(ALT검사, 수혈용 혈액) 결과 101 IU/L 이상인 혈액"], 4, "ALT 101 IU/L 이상인 수혈용 혈액은 부적격 혈액입니다."],
+        ["「혈액관리법」상 특정수혈부작용이 발생한 경우 그 발생 원인의 파악 등을 위한 실태조사를 하여야 하는 자는?", ["혈액원장","시·도지사","질병관리청장","보건복지부장관","대한적십자사회장"], 3, "특정수혈부작용 발생 원인 실태조사는 보건복지부장관이 실시합니다."],
+        ["「의료법」상 의료인이나 의료기관 개설자가 보존하여야 할 진료기록부등의 보존 기간이 5년이 아닌 것은?", ["처방전","간호기록부","방사선 사진","조산기록부","검사 소견 기록"], 0, "처방전의 보존 기간은 2년입니다. (진료기록부·수술기록은 10년, 간호기록부·조산기록부·검사소견기록·방사선사진은 5년)"],
+        ["「의료법」상 직접 진찰을 받은 환자가 의식이 없는 경우에 환자를 대리하여 처방전을 수령할 수 없는 자는?", ["배우자","직계비속","직계존속","형제자매","배우자의 형제자매"], 4, "대리수령 가능자는 배우자, 직계존속·비속, 배우자의 직계존속, 형제자매 등이며 '배우자의 형제자매'는 포함되지 않습니다."],
+        ["「의료법」상 100병상 이상 300병상 이하의 종합병원이 반드시 갖추어야 하는 진료과목은?", ["치과","정형외과","가정의학과","영상의학과","이비인후과"], 3, "100~300병상 종합병원은 내과·외과·소아청소년과·산부인과 중 3개 진료과목, 영상의학과, 마취통증의학과와 진단검사의학과 또는 병리과를 포함한 7개 이상의 진료과목을 갖추어야 합니다."],
+        ["「의료법」상 의료인의 품위를 심하게 손상시키는 행위를 한 경우 행정처분은?", ["경고 처분","면허 취소","시정명령","면허자격정지","과태료 부과"], 3, "품위손상행위는 1년 이내의 면허자격정지 사유입니다."],
+        ["「의료기사 등에 관한 법률」상 임상병리사의 구체적인 업무 범위가 아닌 것은?", ["검사용 시약의 조제","검사물 등의 채취·검사","혈액의 채혈·제제·보존","방사선 등 관련 기기의 취급","기계·기구·시약 등의 보관·관리"], 3, "방사선 등 관련 기기의 취급은 방사선사의 업무입니다."],
+        ["「의료기사 등에 관한 법률」상 국가시험 응시자격에 제한을 받지 않는 자는?", ["피성년후견인","마약류 중독자","파산선고를 받은 자","국가시험에 관하여 부정행위를 한 자","부정한 방법으로 국가시험에 응시한 자"], 2, "파산선고를 받은 자는 의료기사 결격사유나 국시 응시제한 대상이 아닙니다."],
+        ["「의료기사 등에 관한 법률」상 의료기사등의 면허 취소 사유에 해당되지 않는 것은?", ["결격사유에 해당할 때","타인에게 면허증을 대여한 때","면허자격정지 기간 중에 업무를 행한 때","3회 이상 면허자격정지 처분을 받은 때","의료기사등의 업무범위에서 벗어나는 행위를 한 때"], 4, "업무범위를 벗어난 행위는 면허자격정지(6개월 이내) 사유입니다."],
+        ["「의료기사 등에 관한 법률」상 업무에 종사하지 않다가 다시 종사하려는 임상병리사 중 보수교육이 3년 이상 유예된 경우 받아야 하는 최소 보수교육 시간은?", ["8시간 이상","12시간 이상","16시간 이상","20시간 이상","24시간 이상"], 3, "1년 유예 시 12시간, 2년 유예 시 16시간, 3년 이상 유예 시 20시간 이상을 이수해야 합니다."],
+        ["「의료기사 등에 관한 법률」상 의료기사등이 3년 이하의 징역 또는 3천만원 이하의 벌금에 처해지는 경우가 아닌 것은?", ["면허 대여를 알선한 경우","업무상 알게 된 비밀을 누설한 경우","면허 없이 의료기사등의 업무를 행한 경우","타인에게 의료기사등의 면허증을 대여한 경우","면허 없이 의료기사등과 유사한 명칭을 사용한 경우"], 4, "유사 명칭 사용은 과태료(300만원 이하) 처분 대상입니다."],
+        ["「감염병의 예방 및 관리에 관한 법률」상 '감염병의사환자'에 해당하는 사람은?", ["감염병환자등과 접촉하거나 접촉이 의심되는 사람","검역관리지역에 체류하거나 그 지역을 경유한 사람","감염병병원체 등 위험요인에 노출되어 감염이 우려되는 사람","임상적인 증상은 없으나 감염병병원체를 보유하고 있는 사람","감염병병원체가 인체에 침입한 것으로 의심되나 감염병환자로 확인되기 전 단계에 있는 사람"], 4, "병원체가 침입한 것으로 의심되나 감염병환자로 확인되기 전 단계에 있는 사람이 '감염병의사환자'입니다."],
+        ["「감염병의 예방 및 관리에 관한 법률」상 보건소장이 특별자치도지사 또는 시장·군수·구청장에게 보고할 때 감염병 구분에 따른 보고 시기로 옳지 않은 것은?", ["제1급감염병의 발생, 사망, 병원체 검사 결과의 보고: 즉시","제2급감염병의 발생, 사망, 병원체 검사 결과의 보고: 24시간 이내","제3급감염병의 발생, 사망, 병원체 검사 결과의 보고: 3일 이내","제4급감염병의 발생, 사망의 보고: 7일 이내","예방접종 후 이상반응의 보고: 즉시"], 2, "제3급감염병의 보고 시기도 제2급과 동일하게 24시간 이내입니다."],
+        ["「감염병의 예방 및 관리에 관한 법률」상 예방접종업무를 위탁하였을 때 예방접종 비용 산정 및 비용 상환 절차 등에 관해 필요한 사항을 정하여 고시하는 자는?", ["보건소장","시·도지사","질병관리청장","시장·군수·구청장","식품의약품안전처장"], 2, "질병관리청장이 정하여 고시합니다."],
+        ["「감염병의 예방 및 관리에 관한 법률」상 질병관리청장의 보유허가를 받지 아니하고 생물테러감염병병원체를 보유한 자에게 처하는 벌칙으로 옳은 것은?", ["5년 이하의 징역 또는 5천만원 이하의 벌금","3년 이하의 징역 또는 3천만원 이하의 벌금","2년 이하의 징역 또는 2천만원 이하의 벌금","1년 이하의 징역 또는 2천만원 이하의 벌금","1년 이하의 징역 또는 1천만원 이하의 벌금"], 0, "무허가 생물테러감염병병원체 보유 시 5년 이하의 징역 또는 5천만원 이하의 벌금에 처합니다."],
+        ["「지역보건법」상 해당 시·군·구의 인구가 몇 명을 초과할 때 보건소를 추가로 설치할 수 있는가?", ["10만 명","15만 명","20만 명","25만 명","30만 명"], 4, "시·군·구의 인구가 30만 명을 초과하는 경우 보건소를 추가 설치할 수 있습니다."],
+        ["「지역보건법」상 보건소의 업무 중 지역주민의 건강증진 및 질병예방·관리를 위하여 제공하는 지역보건의료서비스가 아닌 것은?", ["학교보건사업","감염병의 예방 및 관리","모성과 영유아의 건강유지·증진","여성·노인·장애인의 건강유지·증진","국민건강증진·구강건강·영양관리사업"], 0, "학교보건사업은 보건소 고유 업무가 아닙니다."],
+        ["「지역보건법」상 의료기관이 의료기관 외의 장소에서 지역주민 다수를 대상으로 건강검진 등 행위를 하려는 경우에는 누구에게 신고하여야 하는가?", ["시·도지사","관할 경찰서장","관할 보건소장","보건복지부장관","시장·군수·구청장"], 2, "관할 보건소장에게 신고하여야 합니다."],
+        ["「혈액관리법」상 사용하는 용어의 정의로 옳지 않은 것은?", ["혈액: 인체에서 채혈한 혈구 및 혈장","헌혈자: 자기의 혈액을 혈액원에 유상으로 제공하는 사람","혈액원: 혈액관리업무를 수행하기 위하여 보건복지부장관의 허가를 받은 자","채혈: 수혈 등에 사용되는 혈액제제를 제조하기 위하여 헌혈자로부터 혈액을 채취하는 행위","채혈부작용: 채혈 후에 헌혈자에게 나타날 수 있는 혈관미주신경반응 또는 피하출혈 등 미리 예상하지 못한 부작용"], 1, "헌혈자는 자기의 혈액을 혈액원에 '무상'으로 제공하는 사람입니다."],
+        ["「혈액관리법」상 혈액관리업무를 할 수 없는 자는?", ["병원","보건지소","종합병원","대한적십자사","혈액제제 제조업자"], 1, "의료기관(의원·병원·종합병원), 대한적십자사, 혈액제제 제조업자만 가능하며 보건지소는 할 수 없습니다."],
+        ["「혈액관리법」상 혈액원이 헌혈자로부터 채혈한 혈액의 적격 여부를 확인하기 위해 실시하는 검사 항목에 해당하지 않는 것은?", ["매독 검사","간암표지자 검사","비(B)형간염 검사","시(C)형간염 검사","후천성면역결핍증 검사"], 1, "선별검사 항목은 ALT, B형간염, C형간염, 매독, HIV, HTLV 등이며 간암표지자(AFP)는 포함되지 않습니다."],
+        ["「혈액관리법」상 헌혈이 직접적인 원인이 되어 질병이 발생하거나 사망한 채혈부작용자에게 보상금을 지급할 수 있는 곳은?", ["혈액원","보건복지부","질병관리청","대한적십자사","헌혈추진협의회"], 0, "혈액원은 채혈부작용에 대하여 보상금을 지급할 수 있습니다."],
+        ["「의료법」상 의사의 결격사유가 아닌 것은?", ["한정후견인","피성년후견인","마약·대마·향정신성의약품 중독자","전문의가 의료인으로 부적합하다고 인정한 정신질환자","금고 이상의 형의 선고유예를 받고 그 유예기간 중에 있는 자"], 0, "'피한정후견인'이 결격사유이며, 후견인 역할을 하는 '한정후견인'은 결격사유가 아닙니다."],
+        ["「의료법」상 의료인이나 의료기관 개설자가 10년 동안 보존해야 하는 진료에 관한 기록은?", ["처방전","수술기록","환자 명부","간호기록부","진단서 등의 부본"], 1, "진료기록부와 수술기록은 10년간 보존해야 합니다."],
+        ["「의료법」상 의료법인이 의료업무 외에 부대사업을 하고자 할 때 이를 의료기관의 소재지를 관할하는 누구에게 신고하여야 하는가?", ["보건복지부장관","행정안전부장관","보건소장","시·도지사","시장·군수·구청장"], 3, "시·도지사에게 신고하여야 합니다."],
+        ["「의료법」상 의사가 의료인의 품위를 심하게 손상시키는 행위를 한 때에 보건복지부장관에게 자격정지처분을 요구할 수 있는 사람은?", ["보건소장","중앙회장","시·도지사","보건복지부차관","시장·군수·구청장"], 1, "각 의료인 중앙회의 장(중앙회장)은 윤리위원회의 심의·의결을 거쳐 자격정지 처분을 요구할 수 있습니다."],
+        ["「의료기사 등에 관한 법률」상 대통령령으로 정하는 임상병리사의 업무로 옳은 것은?", ["검사용 시약의 판매","검사물 등의 채취·검사","혈액의 채혈·수혈·사용","의료영상진단기와 초음파진단기의 취급","각종 화학적 또는 생리학적 진단 및 치료"], 1, "검사물 등의 채취·검사가 임상병리사의 고유 업무입니다."],
+        ["「의료기사 등에 관한 법률」상 의료기사등이 면허증을 분실하여 재발급을 신청한 경우 면허증을 재발급받을 때까지 면허증을 갈음할 수 있는 것은?", ["시·도지사의 접수증","보건복지부장관의 접수증","보건복지부장관의 의뢰증","시장·군수·구청장의 접수증","시장·군수·구청장의 의뢰증"], 1, "보건복지부장관의 접수증으로 면허증을 갈음할 수 있습니다."],
+        ["「의료기사 등에 관한 법률」상 임상병리사의 면허자격 정지 사유에 해당하지 않는 것은?", ["다른 사람에게 면허를 대여한 행위","의료기사등의 업무 범위를 벗어나는 행위","검사 결과를 사실과 다르게 판시하는 행위","「의료기사 등에 관한 법률」에 의한 명령을 위반한 경우","윤리적으로 허용되지 아니하는 방법으로 업무를 하는 행위"], 0, "타인에게 면허를 대여한 행위는 필요적 '면허취소' 사유입니다."],
+        ["[53회 8번] 「의료기사 등에 관한 법률」상 의료기사의 보수교육에 관한 내용이 옳게 묶인 것은?", ["보수교육관계 서류보존기간: 5년","연간 보수교육시간: 10시간 이상","보수교육 이수증 발급: 보수교육실시기관장","보수교육 면제신청서: 보건복지부장관에게 제출","보수교육 1년 유예된 경우 이수해야 할 보수교육시간: 16시간 이상"], 2, "보수교육 이수증은 보수교육실시기관의 장이 발급합니다."],
+        ["[53회 9번] 「의료기사 등에 관한 법률」상 임상병리사가 업무상 알게 된 비밀을 누설한 경우와 동일한 벌칙(3년 이하 징역 또는 3천만원 이하 벌금)을 받는 것은?", ["2개소 이상의 치과기공소를 개설한 자","실태와 취업 상황을 허위로 신고한 사람","등록을 하지 아니하고 안경업소를 개설한 자","의료기사등의 면허 없이 의료기사등의 업무를 한 사람","의료기사등의 면허 없이 유사한 명칭을 사용한 자"], 3, "무면허 업무 수행, 면허 대여, 비밀 누설은 모두 3년 이하 징역 또는 3천만원 이하 벌금 대상입니다."],
+        ["[53회 10번] 「감염병의 예방 및 관리에 관한 법률」상 그 발생을 계속 감시할 필요가 있어 발생 또는 유행 시 24시간 이내에 신고하여야 하는 감염병은?", ["제1급감염병","제2급감염병","제3급감염병","제4급감염병","제5급감염병"], 2, "그 발생을 계속 감시할 필요가 있어 24시간 이내에 신고해야 하는 감염병은 제3급감염병입니다."],
+        ["[53회 11번] 「감염병의 예방 및 관리에 관한 법률」상 의사로부터 예방접종 후 이상반응 발생 신고를 받은 보건소장은 보고서를 언제까지 특별자치도지사 또는 시장·군수·구청장에게 제출하여야 하는가?", ["즉시","24시간 이내","48시간 이내","7일 이내","14일 이내"], 0, "예방접종 후 이상반응의 보고는 '즉시' 하여야 합니다."],
+        ["[53회 12번] 「감염병의 예방 및 관리에 관한 법률」상 필수예방접종 대상 감염병이 아닌 것은?", ["홍역","결핵","B형간염","말라리아","사람유두종바이러스 감염증"], 3, "말라리아는 모기 매개 원충 질환으로 필수예방접종 대상 감염병이 아닙니다."],
+        ["[53회 13번] 「감염병의 예방 및 관리에 관한 법률」상 고위험병원체를 보유·관리하는 자는 매년 보유현황 기록을 작성하여 누구에게 제출하여야 하는가?", ["보건소장","시·도지사","질병관리청장","보건복지부장관","시장·군수·구청장"], 2, "질병관리청장에게 제출합니다."],
+        ["[53회 14번] 「지역보건법」상 보건소의 기능 및 업무 중 지역주민의 건강증진 및 질병예방·관리를 위한 지역보건의료서비스 제공 항목은?", ["산업재해 예방","학교보건 업무","감염병치료제 개발","난임의 예방 및 관리","근로자의 작업환경 개선"], 3, "모성과 영유아의 건강유지·증진 및 난임의 예방 및 관리는 보건소 업무입니다."],
+        ["[53회 15번] 「지역보건법」상 보건소장 임용 시 의사면허자를 임용하기 어려운 경우, 4급 보건소장으로 임명하고자 할 때 보건등 직렬 공무원은 보건등 분야 근무경력이 최소 몇 년이면서 4급으로 근무한 경력이 있어야 하는가?", ["1년","2년","3년","4년","5년"], 0, "4급 이상 공무원으로서 보건 등 분야 근무경력이 1년 이상인 사람을 임용할 수 있습니다."],
+        ["[53회 16번] 「지역보건법」상 건강검진 등의 신고를 하지 아니하거나 거짓으로 신고하고 건강검진등을 한 자에 대한 조치는?", ["300만원 이하의 과태료","500만원 이하의 과태료","3천만원 이하의 과태료","500만원 이하의 벌금","1년 이하의 징역 또는 1천만원 이하의 벌금"], 0, "300만원 이하의 과태료를 부과합니다."],
+        ["[53회 17번] 「혈액관리법」상 혈액을 원료로 제조한 의약품인 혈액제제에 해당하지 않는 것은?", ["전혈","농축적혈구","농축혈소판","신선동결혈장","해동신선백혈구"], 4, "해동신선백혈구라는 혈액제제는 존재하지 않습니다."],
+        ["[53회 18번] 「혈액관리법」상 혈액제제공급업무 시 혈액제제운송 및 수령확인서를 공급자와 수령자가 몇 년간 각각 보관하여야 하는가?", ["1년","2년","3년","4년","5년"], 2, "공급자와 수령자가 각각 3년간 보관하여야 합니다."],
+        ["[53회 19번] 「혈액관리법」상 혈액원은 혈액의 적격여부 검사 후 헌혈자에게 검사결과를 통보할 때 함께 통보하여야 하는 항목이 아닌 것은?", ["매독검사","간기능(ALT)검사","비(B)형간염검사","시(C)형간염검사","후천성면역결핍증검사"], 4, "후천성면역결핍증(HIV) 검사 결과는 헌혈자에게 통보하지 않습니다."],
+        ["[53회 20번] 「혈액관리법」상 특정수혈부작용의 발생 신고를 통보받으면 그 발생 원인의 파악 등을 위한 실태조사를 하여야 하는 자는?", ["시·도지사","질병관리청장","보건복지부장관","대한적십자사회장","특별자치도지사 또는 시장·군수·구청장"], 2, "보건복지부장관이 실태조사를 하여야 합니다."]
+    ]),
+
+    // 4. 공중보건학 (50·51·53회 1교시 21~30번 = 30문항)
+    publicHealth: buildQuestions([
+        ["[50회 21번] 보건의료활동 중 일차보건의료에 해당하는 것은?", ["예방접종","장기요양","응급의료활동","급성질환관리","퇴행성질환관리"], 0, "예방접종은 기본적인 일차보건의료 활동입니다."],
+        ["[50회 22번] 사람의 체내에서 체온 생산이 가장 많이 일어나는 부위는?", ["방광","콩팥","폐포","피부","골격근(뼈대근육)"], 4, "골격근에서 체열 생산이 가장 많이 일어납니다."],
+        ["[50회 23번] 물고기의 생존에 필요한 용존산소량(DO)은 최소한 몇 ppm 이상이어야 하는가?", ["0.1 ppm","0.5 ppm","1.0 ppm","5.0 ppm","20 ppm"], 3, "어류 생존을 위한 용존산소량(DO)은 최소 5.0 ppm 이상입니다."],
+        ["[50회 24번] 사무직 근로자와 여성근로자의 주 작업 근로강도로 적절한 중등노동의 비교에너지대사율(RMR)은?", ["RMR 1 미만","RMR 1~2","RMR 3~4","RMR 5~6","RMR 7 이상"], 1, "중등노동(보통작업)의 RMR은 1~2입니다."],
+        ["[50회 25번] 식품을 보존하는 방법 중 물리적 보존법에 해당하는 것은?", ["가열법","염장법","훈연법","산첨가법","보존료첨가법"], 0, "가열법은 물리적 보존법이며 나머지는 화학적 보존법입니다."],
+        ["[50회 26번] 기존 자료의 활용이 가능하고 희귀질환연구나 잠복기가 긴 질병연구에 적합한 연구방법은?", ["단면연구","실험연구","코호트 연구","기술역학적 연구","환자-대조군 연구"], 4, "환자-대조군 연구는 희귀질환이나 잠복기가 긴 질병 연구에 적합합니다."],
+        ["[50회 27번] 환자의 분변으로 배설된 병원체가 음식물이나 물에 오염되어 경구로 침입한 후 감염을 일으키는 소화기감염병은?", ["홍역","일본뇌염","C형간염","장티푸스","인플루엔자"], 3, "장티푸스는 대표적인 수인성·식품매개 소화기 감염병입니다."],
+        ["[50회 28번] 의료서비스의 전체 행위량과 관계 없이 질병군에 따라 진료비가 지불되며, 과잉 진료를 방지하여 의료비의 상승을 억제하는 의료비 지불방법은?", ["굴신제","봉급제","인두제","포괄수가제","행위별 수가제"], 3, "질병군별로 미리 정해진 진료비를 지불하는 방식은 포괄수가제(DRG)입니다."],
+        ["[50회 29번] 체내에서 삼투압 유지와 수분 평형, 산과 염기의 균형을 조절하는 조절영양소는?", ["식염(NaCl)","철분(Fe)","칼륨(K)","요오드(I)","마그네슘(Mg)"], 0, "식염(NaCl)은 체액 삼투압과 수분 평형 조절의 핵심입니다."],
+        ["[50회 30번] 신맬더스주의(Neo-Malthusism)에서 주장한 인구억제방법은?", ["금욕","만혼","피임","성적 순결","최고 생활 수준"], 2, "신맬더스주의는 피임을 통한 인위적 산아제한을 주장했습니다."],
+        ["[51회 21번] 공중보건학의 연구 대상으로 적절한 것은?", ["초고령자","고혈압 환자","건강검진 수검자","지역사회 전체 주민","비위생적 생활습관자"], 3, "공중보건학의 연구 대상은 지역사회 전체 주민(집단)입니다."],
+        ["[51회 22번] 실내공기 오염 정도를 판정하는 기준으로 사용되는 기체는?", ["수소","오존","질소","아황산가스","이산화탄소"], 4, "실내공기 오염의 대표적 지표는 이산화탄소(CO2, 허용기준 0.1% 이하)입니다."],
+        ["[51회 23번] 도시 하수를 위생 처리할 때 효율이 좋고 악취나 해충이 발생하지 않는 방법은?", ["부패조","임호프조","산화지법","살수여상법","활성오니법"], 4, "활성오니법(활성슬러지법)은 호기성 미생물을 이용해 대도시 하수처리에 가장 널리 쓰입니다."],
+        ["[51회 24번] 고온 환경에서 오랜 시간 작업하여 열탈진 또는 열허탈이 발생했을 때 적절한 응급조치는?", ["보호구 착용","진통제 주사","고지방식 섭취","생리식염수 주사","인공적인 산소 공급"], 3, "열탈진(열피로)은 땀 과다 배출로 인한 수분·염분 결핍이 원인이므로 생리식염수를 공급합니다."],
+        ["[51회 25번] 식품의 위생관리에서 가장 중요한 것은?", ["기능성","보존성","안전성","영양성","저장성"], 2, "식품위생에서 가장 우선시되는 요소는 안전성(유해물질로부터의 안전)입니다."],
+        ["[51회 26번] 보험가입자, 군인 등 과거 기록이 정확한 사람들을 대상으로 원인에 따른 질병발생률의 차이를 비교 분석하는 역학적 연구방법은?", ["단면적 연구","기술역학 연구","실험역학 연구","환자-대조군 연구","후향적 코호트 연구"], 4, "과거의 정확한 의무·건강기록을 바탕으로 현재까지의 질병 발생을 추적하는 방법은 후향적 코호트 연구입니다."],
+        ["[51회 27번] 절지동물 매개 감염병 중 모기에 의해 전파되는 질병은?", ["페스트","말라리아","발진티푸스","쯔쯔가무시병","신증후군출혈열"], 1, "말라리아는 중국얼룩날개모기가 매개합니다."],
+        ["[51회 28번] 가입자가 갑작스러운 사고, 질병으로 사망 또는 장애를 입어 소득활동이 중단된 경우에 본인이나 유족들이 안정된 생활을 할 수 있도록 정부가 운용하는 소득보장 제도는?", ["건강보험","고용보험","국민연금","의료급여","산업재해보상보험"], 2, "노령·장애·사망에 대하여 연금급여를 실시해 생활안정을 돕는 소득보장 제도는 국민연금입니다."],
+        ["[51회 29번] 갑상샘호르몬의 주요 구성 성분이며, 체내에서 에너지 대사, 단백질 합성, 효소 활성 조절 등 생리적 작용에 관여하는 무기질은?", ["구리","철분","칼슘","요오드","마그네슘"], 3, "갑상샘 호르몬(티록신)의 구성 성분은 요오드(I)입니다."],
+        ["[51회 30번] 한 명의 여자가 가임기간 동안에 낳은 여자아이의 수로 나타내는 인구지표는?", ["조출생률","인구증가율","총재생산율","합계출산율","조자연증가율"], 2, "가임여성이 평생 낳는 '여자아이'의 수는 총재생산율(GRR)입니다."],
+        ["[53회 21번] 의료인력의 역할이 중요한 보건의료 활동에서 2차 보건의료 사업에 해당하는 것은?", ["모자보건사업","예방접종사업","급성질환의 관리사업","만성질환의 관리사업","주민의 영양개선사업"], 2, "급성질환의 조기 진단 및 전문적 치료·관리사업은 2차 보건의료에 해당합니다."],
+        ["[53회 22번] 인간의 체열방산작용에 영향을 미치는 온열요소로만 묶인 것은?", ["기류, 기압, 기온, 복사열","기류, 기압, 일광, 복사열","기류, 기습, 기압, 복사열","기류, 기습, 기온, 복사열","기류, 기온, 일광, 복사열"], 3, "4대 온열요소는 기온, 기습(습도), 기류, 복사열입니다."],
+        ["[53회 23번] 헤모글로빈(hemoglobin)과 친화성이 산소에 비해서 200배 이상 강하고, 중독 시 중추신경계 손상으로 생명이 위험한 질식성 기체는?", ["오존","질소","헬륨","일산화탄소","이산화탄소"], 3, "일산화탄소(CO)는 산소보다 헤모글로빈 친화력이 200~250배 높아 조직 저산소증을 유발합니다."],
+        ["[53회 24번] 내화직물, 단열재, 절연체 등을 다루는 근로자에게 진폐증을 일으킬 수 있는 1급 발암물질은?", ["석면","수은","아연","염소","칼슘"], 0, "석면(Asbestos)은 석면폐증, 악성중피종, 폐암을 유발하는 1급 발암물질입니다."],
+        ["[53회 25번] 단백질이 주성분인 식품이 자체 효소나 미생물의 작용으로 유해하게 변질되는 현상은?", ["발효","변패","부패","산패","해리"], 2, "단백질 식품의 변질은 부패, 탄수화물·지방은 변패, 유지의 산화는 산패라 합니다."],
+        ["[53회 26번] 역학의 연구방법 중 코호트 연구와 비교하여 환자-대조군 연구의 특징으로 옳은 것은?", ["희귀 질병 연구에 적합하다.","귀속위험도를 구할 수 있다.","비교위험도를 구할 수 있다.","질병발생률을 구할 수 있다.","위험요인과 질병 간의 시간적 선후관계가 명확하다."], 0, "환자-대조군 연구는 희귀 질병 연구에 적합하며 교차비(OR)를 구합니다."],
+        ["[53회 27번] 구토와 설사, 탈수 증세를 호소하는 해외여행객을 검역소 내 격리시설에서 5일간 격리조치한 후 상태가 호전되어 귀가시킨 경우에 가능성이 높은 감염병은?", ["콜레라","조류인플루엔자","에볼라바이러스병","중동호흡기증후군","중증급성호흡기증후군"], 0, "콜레라는 잠복기가 최대 5일이며 심한 수양성 설사와 구토·탈수를 유발하는 검역감염병입니다."],
+        ["[53회 28번] 우리나라에서 생활이 어려운 자의 국민보건 향상과 사회복지 증진에 이바지함을 목적으로 시행되는 공공부조제도는?", ["건강보험","산재보험","연금보험","실업급여","의료급여"], 4, "저소득층을 대상으로 국가가 의료를 보장하는 공공부조제도는 의료급여입니다."],
+        ["[53회 29번] DNA 합성과 세포 분열에 필수적이고 임신 초기의 임신부에게 결핍 시 태아의 신경관 결손 기형 등을 유발하는 영양소는?", ["불소","엽산","칼륨","나트륨","요오드"], 1, "임신 초기 엽산(Folic acid, 비타민 B9) 결핍 시 태아 신경관 결손이 발생합니다."],
+        ["[53회 30번] 우리나라의 국가 통계조사 중 하나인 인구주택총조사 실시 주기는?", ["3년","5년","7년","9년","10년"], 1, "인구주택총조사(센서스)는 5년마다 실시됩니다."]
+    ]),
+
+    // 5. 해부생리학 (50·51·53회 1교시 31~40번 = 30문항)
+    anatomy: buildQuestions([
+        ["[50회 31번] 다음의 특징을 가지는 머리뼈는?\n• 청각기 수용 • 꼭지돌기, 붓돌기 관찰", ["나비뼈","관자뼈","마루뼈","이마뼈","뒤통수뼈"], 1, "관자뼈(측두골)에 청각기와 꼭지돌기·붓돌기가 있습니다."],
+        ["[50회 32번] 심장의 왼심방으로 연결되는 혈관은?", ["대동맥","배대동맥","위대정맥","허파정맥","아래대정맥"], 3, "허파정맥(폐정맥)이 왼심방으로 들어옵니다."],
+        ["[50회 33번] 다음의 특징을 가지는 장기는?\n• 샘창자로 연결 • 인슐린, 글루카곤 분비 • 머리, 몸통, 꼬리로 구분", ["간","위","식도","이자","쓸개"], 3, "이자(췌장)의 특징입니다."],
+        ["[50회 34번] 허파의 구조로 옳은 것은? (왼허파 : 오른허파)", ["1엽 : 2엽","2엽 : 2엽","2엽 : 3엽","3엽 : 2엽","3엽 : 3엽"], 2, "왼허파는 2엽, 오른허파는 3엽입니다."],
+        ["[50회 35번] 뇌신경 중에서 감각과 운동 성분이 모두 포함된 혼합신경은?", ["후각신경(I)","시각신경(II)","삼차신경(V)","속귀신경(VIII)","혀밑신경(XII)"], 2, "삼차신경(제5뇌신경)은 감각과 운동(저작근)을 모두 담당하는 혼합신경입니다."],
+        ["[50회 36번] 뼈대근육 근육원섬유마디의 기본단위는?", ["A띠","H띠","I띠","M선-Z선","Z선-Z선"], 4, "Z선과 Z선 사이가 근육원섬유마디(Sarcomere)입니다."],
+        ["[50회 37번] 다음의 심장 주기는?\n• 심실 내압 상승 • 심장 내 모든 판막이 폐쇄 • 심실근육세포는 완전히 탈분극", ["심방수축기","심실수축기","심실충만기","등용적성 수축기","등용적성 이완기"], 3, "모든 판막이 닫힌 채 심실 내압만 상승하는 등용적성 수축기입니다."],
+        ["[50회 38번] 허파에서 가스 확산이 일어날 때, 표면장력을 감소시키는 세포는?", ["적혈구","먼지세포","버팀세포","술잔세포","제II형 허파꽈리세포"], 4, "제II형 허파꽈리세포가 계면활성제(surfactant)를 분비합니다."],
+        ["[50회 39번] 작은창자의 흡수 면적을 늘리기 위해 발달된 구조는?", ["날문관","간원인대","돌림주름","복막주름","잘록창자띠"], 2, "작은창자에는 돌림주름(윤상주름)과 융모가 발달해 있습니다."],
+        ["[50회 40번] 부신속질에서 분비되는 물질은?", ["인슐린(insulin)","멜라토닌(melatonin)","알도스테론(aldosterone)","에피네프린(epinephrine)","테스토스테론(testosterone)"], 3, "부신속질(수질)에서는 에피네프린과 노르에피네프린이 분비됩니다."],
+        ["[51회 31번] 볼기뼈 중에서 귀바퀴면이 있는 뼈는?", ["궁둥뼈","두덩뼈","엉덩뼈","꼬리뼈","넙다리뼈"], 2, "엉덩뼈(장골) 안쪽에 엉치뼈와 관절하는 귀바퀴면(이상면)이 있습니다."],
+        ["[51회 32번] 위대정맥과 아래대정맥의 혈액이 들어가는 심장부위는?", ["왼심방","왼심실","오른심방","오른심실","심실사이막"], 2, "위·아래대정맥은 오른심방(우심방)으로 들어갑니다."],
+        ["[51회 33번] 배막(복막) 뒤장기로서 내분비샘과 외분비샘이 있는 장기는?", ["간","이자","지라","콩팥","쓸개"], 1, "이자(췌장)는 복막뒤장기(후복막장기)이며 내·외분비 기능을 모두 가집니다."],
+        ["[51회 34번] 다음과 같은 기능을 하는 물질을 분비하는 세포는?\n• 표면장력을 낮추어 준다. • 들숨 시 허파의 확장을 도와준다. • 날숨 시 허파가 달라붙는 현상을 방지한다.", ["조직구","먼지세포","쿠퍼세포","랑게르한스세포","II형 허파꽈리세포"], 4, "II형 허파꽈리세포가 폐표면활성제를 분비합니다."],
+        ["[51회 35번] 다음에서 설명하는 뇌신경은?\n• 혼합신경 • 부교감신경 포함 • 분포 범위(머리, 목, 가슴, 배의 내장)가 가장 넓음", ["더부신경(XI)","미주신경(X)","후각신경(I)","눈돌림신경(III)","혀인두신경(IX)"], 1, "제10뇌신경인 미주신경(Vagus nerve)은 가슴과 배의 내장까지 가장 넓게 분포합니다."],
+        ["[51회 36번] 다음과 같은 세포막 물질 운반 방식은?\n• 에너지가 필요하지 않음 • 운반체(운반단백질) 이용 • 농도경사 정방향(고농도→저농도)으로 물질 이동", ["삼투","여과","능동운반","단순확산","촉진확산"], 4, "ATP 소모 없이 운반체 단백질을 이용해 농도경사를 따라 이동하는 방식은 촉진확산입니다."],
+        ["[51회 37번] 심장 주기에서 다음과 같은 특징이 나타나는 시기는?\n• 모든 판막 닫힘 • 심실 내압 감소 • 혈액이동(부피변화) 없음", ["박출기","심방수축기","심실충만기","등용적성 수축기","등용적성 확장기"], 4, "심실 박출 직후 반달판막이 닫히고 방실판막은 아직 열리지 않아 부피 변화 없이 내압만 감소하는 등용적성 확장기(이완기)입니다."],
+        ["[51회 38번] 호흡의 자동성을 조절하는 중추는?", ["대뇌","소뇌","시상","척수","숨뇌"], 4, "숨뇌(연수)와 다리뇌(교뇌)에 호흡중추가 위치합니다."],
+        ["[51회 39번] 식도, 위, 작은창자에서 공통적으로 일어나는 운동은?", ["꿈틀운동","융모운동","집단운동","분절운동","공복수축운동"], 0, "음식물을 아래로 이동시키는 꿈틀운동(연동운동)이 공통적으로 일어납니다."],
+        ["[51회 40번] 다음에서 설명하는 호르몬 분비 기관은?\n• 나비뼈의 안장에 위치 • 성인기에 제거 시 요붕증 발생 • 성장기에 제거 시 신체 발육 부진 발생", ["갑상샘","뇌하수체","부갑상샘","부신겉질","솔방울샘"], 1, "뇌하수체(Pituitary gland)는 나비뼈의 안장(터키안)에 위치하며 성장호르몬(전엽)과 ADH(후엽)를 분비합니다."],
+        ["[53회 31번] 다음에서 설명하는 뼈는?\n• 긴뼈(long bone)임 • 위끝, 몸통, 아래끝으로 구분됨 • 해부목, 외과목, 큰결절, 작은결절이 관찰됨", ["노뼈","자뼈","위팔뼈","정강뼈","넓적다리뼈"], 2, "위팔뼈(상완골, Humerus) 몸통 위끝에는 해부목, 외과목, 큰결절, 작은결절이 있습니다."],
+        ["[53회 32번] 심장의 해부학적 특징으로 옳은 것은?", ["심장벽은 2층으로 구성된다.","심장의 2/3는 정중선 오른쪽에 있다.","우심실벽은 좌심실벽보다 더 두껍다.","심장끝은 혈관이 있는 위쪽 부분이다.","승모판은 좌심방과 좌심실 사이에 있다."], 4, "좌심방과 좌심실 사이에 이첨판(승모판)이 위치합니다."],
+        ["[53회 33번] 췌장에서 분비되는 혈당 상승 호르몬은?", ["글루카곤","멜라토닌","안드로젠","옥시토신","칼시토닌"], 0, "췌장 랑게르한스섬 알파세포에서 글루카곤이 분비되어 혈당을 높입니다."],
+        ["[53회 34번] 폐의 우폐구역 수(개)는?", ["2","3","8","10","12"], 3, "오른허파는 3엽 10구역, 왼허파는 2엽 8~9구역으로 이루어져 있습니다."],
+        ["[53회 35번] 다음에서 설명하는 신경은?\n• 팔꿈치굴증후군 발생과 관련 • 넷째 손가락 안쪽의 1/2, 다섯째 손가락의 근육을 지배 • 마비 시 갈퀴손(claw hand) 유발", ["자신경(ulnar nerve)","노신경(radial nerve)","정중신경(median nerve)","겨드랑신경(axillary nerve)","근육피부신경"], 0, "자신경(척골신경) 마비 시 갈퀴손(독수리손) 변형이 나타납니다. (노신경은 손목처짐, 정중신경은 원숭이손)"],
+        ["[53회 36번] 농도경사에 역행하여 물질을 이동시키기 위해 에너지가 필요한 세포막의 물질 운반 방식은?", ["삼투","여과","능동수송","단순확산","촉진확산"], 2, "능동수송(Active transport)은 ATP 에너지를 소모하여 저농도에서 고농도로 물질을 이동시킵니다."],
+        ["[53회 37번] 다음과 같은 특징이 나타나는 심장주기는?\n• 심전도상에 T파가 나타남 • 심실근육세포의 재분극이 완료됨 • 좌심실 내압이 대동맥 내압보다 높음", ["심방수축기","심실박출기","심실충만기","등용적수축기","등용적확장기"], 1, "좌심실 내압이 대동맥 내압보다 높아 혈액이 뿜어져 나가며 말기에 심실 재분극(T파)이 일어나는 시기는 심실박출기입니다."],
+        ["[53회 38번] 다음에서 설명하는 호흡이상은?\n• 무호흡이 반복해서 나타남 • 뇌압 상승(뇌염, 수막염)에서 관찰 • 무호흡에서 갑자기 과다호흡으로, 과다호흡이 돌연 무호흡으로 변화", ["비오호흡","빠른호흡","호흡곤란","호흡완만","쿠스마울호흡"], 0, "뇌압 상승이나 연수 손상 시 불규칙한 과호흡과 갑작스러운 무호흡이 교대되는 호흡은 비오호흡(Biot's respiration)입니다."],
+        ["[53회 39번] 다음에서 설명하는 기관은?\n• 서양배 모양의 주머니 • 간의 우엽과 네모엽 사이의 아랫면에 부착 • 길이 7~10cm, 용량 30~35mL", ["위","담낭","비장","신장","췌장"], 1, "담낭(쓸개)은 간 아랫면에 부착된 가지/서양배 모양의 주머니로 쓸개즙을 농축·저장합니다."],
+        ["[53회 40번] 원뿔세포가 밀집되어 있고 물체의 상이 가장 뚜렷하게 맺히는 망막 부위는?", ["각막","홍채","수정체","중심오목","섬모체돌기"], 3, "황반의 중심오목(Fovea centralis)에는 원뿔세포(추상세포)가 밀집되어 시력이 가장 예민합니다."]
+    ]),
+
+    // 6. 조직병리학 (50·51·53회 1교시 41~62번 및 3교시 실기 = 70문항)
+    histopathology: buildQuestions([
+        ["[50회 41번] 심장 및 콩팥 등의 장기에 혈액공급이 급격히 차단되어 허혈성 손상을 초래하여 경색을 동반한 경우 발생되는 괴사는?", ["건락괴사","응고괴사","액화괴사","지방괴사","괴저괴사"], 1, "허혈성 경색(뇌 제외) 시 응고괴사가 발생합니다."],
+        ["[50회 42번] 허파의 울혈로 인해 허파꽈리 내 누출된 적혈구를 탐식하여 혈철소(hemosiderin)를 함유하는 세포는?", ["비만세포","쿠퍼세포","뼈파괴세포","미세아교세포","심부전세포(heart failure cell)"], 4, "만성 폐울혈 시 혈철소를 탐식한 폐포대식세포를 심부전세포라 합니다."],
+        ["[50회 43번] 만성염증의 특이한 형태로 유상피세포, 랑그한스 거대세포, 이물형 거대세포가 나타나는 염증은?", ["괴사성","파종성","화농성","장액성","육아종성"], 4, "결핵 등에서 나타나는 육아종성 염증입니다."],
+        ["[50회 44번] 양성종양(benign tumor)과 악성종양(malignant tumor)의 가장 큰 차이점은?", ["전이(metastasis)","화생(metaplasia)","색전증(embolism)","전위증","세포자멸사(apoptosis)"], 0, "악성종양은 전이(metastasis)를 일으킵니다."],
+        ["[50회 45번] 상염색체 수의 이상을 나타내고, 47,XX(XY), +21 핵형을 보이는 유전질환은?", ["터너증후군","다운증후군","에드워드증후군","고양이울음증후군","클라인펠터증후군"], 1, "21번 삼염색체는 다운증후군입니다."],
+        ["[50회 46번] 소화된 산물을 흡수하기 위해 표면적을 넓히는 미세융모(microvilli)가 발달한 장기는?", ["위","곧창자","잘록창자","식도","작은창자(small intestine)"], 4, "작은창자(소장)에 미세융모가 발달해 있습니다."],
+        ["[50회 47번] 허파꽈리, 혈관과 림프관의 내피, 토리주머니의 벽쪽층을 구성하고 있는 상피는?", ["단층편평","단층원주","단층입방","중층편평","거짓중층섬모원주"], 0, "단층편평상피로 구성되어 있습니다."],
+        ["[50회 48번] 결합조직 내에 가장 많이 존재하고, 아교섬유와 세포외바탕질을 합성하며 상처 치유에 관여하는 것은?", ["형질세포","비만세포","지방세포","섬유모세포","혈관주위세포"], 3, "섬유모세포(Fibroblast)입니다."],
+        ["[50회 49번] 신경세포의 세포체와 가지돌기에 존재하며 호염기성 과립물질(무리리보솜과 조면소포체)로 관찰되는 구조물은?", ["바소체","니슬소체(Nissl body)","치밀소체","하인츠소체","러셀소체"], 1, "니슬소체(Nissl body)입니다."],
+        ["[50회 50번] 가로무늬가 존재하고 원통모양으로 뼈에 부착하며 핵이 세포 주변부에 위치한 다핵성 근육은?", ["심장근","내장근","뼈대근","불수의근","민무늬근"], 2, "뼈대근(골격근)입니다."],
+        ["[50회 51번] 미고정 상태의 콩팥침생검 조직검사에서 표본제작 전에 확인해야 할 사항은?", ["출혈부위","조직의 크기","피막 보존 상태","조직의 동결된 상태","토리(사구체) 포함 유무"], 4, "신장 생검 시 사구체(토리) 포함 여부를 반드시 확인해야 합니다."],
+        ["[50회 52번] 피크린산(picric acid)이 포함된 복합고정액은?", ["Helly","Bouin","Zenker","Carnoy","formal-saline"], 1, "Bouin액은 피크린산, 포르말린, 빙초산 혼합액입니다."],
+        ["[50회 53번] 화학적인 방법으로 탈회 완료시점을 확인하기 위한 수산칼슘(calcium oxalate) 검사법에 첨가하는 용액은?", ["염산","질산","포름산","피크린산","강암모니아수"], 4, "강암모니아수와 수산암모늄을 첨가해 혼탁 여부를 봅니다."],
+        ["[50회 54번] 회전형 박절기를 이용하여 파라핀 블록을 박절할 때 절편이 압축되고 주름이 많이 접히는 결함의 원인은?", ["칼과 블록이 따뜻할 때","탈수가 불완전하게 되었을 때","칼날에 톱날 같은 흠이 있을 때","블록에 석회질 등이 끼어 있을 때","파라핀 침투가 불완전하게 되었을 때"], 0, "칼과 블록이 따뜻하면 절편이 압축되고 주름이 생깁니다."],
+        ["[50회 55번] 퇴행성 방법인 Harris hematoxylin 염색에서 과염색된 핵의 분별에 사용되는 탈색제는?", ["포르말린","산화수은","칼륨명반","산-알코올","암모니아수"], 3, "1% 염산-알코올(산-알코올)로 분별합니다."],
+        ["[50회 56번] H&E 염색의 투명과정에서 뿌옇게 변하는 현상(젖빛 혼탁)이 발생한 원인은?", ["과탈색","불충분한 탈수","불충분한 청색화","불충분한 탈파라핀","hematoxylin의 과염색"], 1, "탈수가 불충분하면 자일렌 투명 시 백탁이 생깁니다."],
+        ["[50회 57번] 탄력섬유를 증명하는 Verhoeff's iron hematoxylin 염색에 사용되는 분별제는?", ["2% ferric chloride","0.2% gold chloride","5% sodium thiosulfate","1% phosphotungstic acid","0.5% potassium permanganate"], 0, "2% 염화제이철(ferric chloride)을 분별제로 씁니다."],
+        ["[50회 58번] Gomori's reticular fiber 염색법과 같이 직접 은(silver)을 환원시키지 못하여 외부로부터 환원제를 첨가하는 도은법은?", ["호은성","은환원성","은거울반응","은이온교환","유도성 은환원성"], 0, "외부 환원제가 필요한 성질은 호은성(argyrophilic)입니다."],
+        ["[50회 59번] PAS 염색에서 양성, d-PAS(diastase-PAS) 염색에서 음성을 나타내는 물질은?", ["핵산","혈철소","멜라닌","글리코겐","산성점액"], 3, "글리코겐은 디아스타제에 의해 소화됩니다."],
+        ["[50회 60번] 진균을 증명하기 위한 GMS 염색에 사용되는 산화제는?", ["acetic acid","formic acid","chromic acid","picric acid","hydrochloric acid"], 2, "GMS 염색의 산화제는 크롬산(chromic acid)입니다."],
+        ["[50회 61번] 면역조직화학염색의 LSAB법에서 비오틴(biotin)이 표지되어 있는 것은?", ["항원","H2O2","1차 항체","2차 항체","DAB"], 3, "2차 항체에 비오틴이 표지되어 있습니다."],
+        ["[50회 62번] 조직절편의 표적물질에 존재하는 DNA에서 특정 영역의 DNA를 단시간 내에 수십만 배로 증폭시키는 검사 방법은?", ["제자리부합법(ISH)","유세포분석법(FCM)","면역조직화학(IHC)","중합효소연쇄반응(PCR)","핵형분석법"], 3, "중합효소연쇄반응(PCR)입니다."],
+        ["[51회 41번] 지속적인 자극으로 성숙한 세포가 다른 형태의 성숙한 세포로 변화되는 양상은?", ["괴사","변성","비대","증식","화생"], 4, "성숙 세포가 다른 종류의 성숙 세포로 대체되는 적응 현상은 화생(Metaplasia)입니다."],
+        ["[51회 42번] 골절과 외상으로 혈관이 폐쇄되어 발생하는 색전증은?", ["가스색전증","양수색전증","종양색전증","지방색전증","패혈색전증"], 3, "장골 골절 시 골수의 지방조직이 혈관으로 유입되어 지방색전증을 일으킵니다."],
+        ["[51회 43번] 알레르기 질환과 기생충감염 시 증가하는 세포는?", ["호산구","섬유세포","연골세포","지방세포","파네트세포"], 0, "호산구(Eosinophil)입니다."],
+        ["[51회 44번] 악성종양의 가장 특징적인 병리학적 소견은?", ["명확한 경계","팽창성 성장","침윤성 증식","전이하지 않음","낮은 N/C ratio"], 2, "악성종양은 주위 조직으로 파고드는 침윤성 증식을 합니다."],
+        ["[51회 45번] 염색체 검사에서 47,XX, +18 핵형과 관련된 유전질환은?", ["다운증후군","터너증후군","파타우증후군","에드워드증후군","클라인펠터증후군"], 3, "18번 삼염색체는 에드워드증후군입니다. (13번은 파타우, 21번은 다운)"],
+        ["[51회 46번] 피부의 표피층을 구성하는 상피세포는?", ["이행세포","단층입방세포","중층편평세포","단층섬모원주세포","거짓중층섬모원주세포"], 2, "표피는 각화 중층편평상피로 이루어져 있습니다."],
+        ["[51회 47번] 돌림주름, 미세융모와 같은 특수 구조가 발달된 장기는?", ["위","식도","곧창자","작은창자","잘록창자"], 3, "작은창자(소장)입니다."],
+        ["[51회 48번] 세포외 바탕질을 형성하고, 방추형이며, 염증과 상처 치유에 관여하는 세포는?", ["비만세포","지방세포","형질세포","섬유모세포","큰포식세포"], 3, "섬유모세포입니다."],
+        ["[51회 49번] 신경아교세포에서 포식(탐식) 기능을 하는 세포는?", ["뇌실막세포","신경집세포","미세아교세포","신경절아교세포","희소돌기아교세포"], 2, "중추신경계의 식작용(포식작용)을 담당하는 아교세포는 미세아교세포(Microglia)입니다."],
+        ["[51회 50번] 손상받으면 재생할 수 없는 영구 세포는?", ["간세포","섬유모세포","심장근육세포","원주상피세포","이행상피세포"], 2, "신경세포, 심장근육세포, 골격근세포는 재생이 불가능한 영구세포(permanent cell)입니다."],
+        ["[51회 51번] 예리한 curet(큐렛)을 이용하여 병터(병소) 부위의 조직을 긁어 채취하는 생검법은?", ["원뿔생검","소파생검","절개생검","절제생검","펀치생검"], 1, "큐렛으로 자궁내막 등을 긁어내는 방법은 소파생검(Curettage biopsy)입니다."],
+        ["[51회 52번] 지방을 증명하기 위한 Sudan black B 염색 후 봉입제는?", ["세덱스","퍼마운트","카나다발삼","글리세린 젤리","셀룰로오스 카프라이트"], 3, "지방 염색 후 유기용매(자일렌)를 쓰면 지방이 녹으므로 수용성 봉입제인 글리세린 젤리 등을 사용합니다."],
+        ["[51회 53번] 퇴행성 헤마톡실린-에오신 염색에서 탈색 후 청색화 과정에 사용하는 용액은?", ["염산","빙초산","알코올","자일렌","암모니아수"], 4, "약알칼리성 용액인 암모니아수나 탄산리튬 포화수용액으로 청색화(bluing)를 진행합니다."],
+        ["[51회 54번] 뼈조직에서 효소나 항원항체 검사에 사용되는 킬레이트 탈회제는?", ["EDTA","nitric acid","picric acid","formic acid","hydrochloric acid"], 0, "EDTA는 조직 손상이 적고 항원성과 효소 활성을 가장 잘 보존하는 킬레이트 탈회제입니다."],
+        ["[51회 55번] 뼈조직의 칼슘을 증명하기 위한 von Kossa 염색에서 환원 역할을 하는 것은?", ["UV light","silver nitrate","chromic acid","gold chloride","sodium thiosulfate"], 0, "von Kossa 칼슘 염색에서는 자외선(UV light)이나 강한 햇빛, 전구 불빛을 비추어 은을 흑색으로 환원시킵니다."],
+        ["[51회 56번] 변색성(metachromasia) 염료에 해당하는 시약은?", ["eosin Y","orange G","picric acid","acid fuchsin","toluidine blue"], 4, "톨루이딘 블루(toluidine blue)는 비만세포 과립이나 연골 기질을 적자색으로 염색시키는 대표적인 변색성 염료입니다."],
+        ["[51회 57번] Masson trichrome 염색에서 매염 역할을 하는 시약은?", ["Bouin","Zenker","acid fuchsin","aniline blue","hematoxylin"], 0, "포르말린 고정 조직에 Masson 삼색염색을 할 때는 56~60℃ Bouin액에서 매염 처리합니다."],
+        ["[51회 58번] 그물(세망)섬유 염색에서 과망간산칼륨을 사용하는 단계는?", ["산화","감작","환원","조색","정착"], 0, "과망간산칼륨(potassium permanganate)은 산화제로 사용됩니다."],
+        ["[51회 59번] Schiff 시약을 검증하는 데 사용하는 시약은?", ["빙초산","아세톤","염화금","질산은","포르말린"], 4, "Schiff 시약의 역가 검증에는 37~40% 포르말린을 떨어뜨려 적자색 발색 여부를 확인합니다."],
+        ["[51회 60번] 진균 검출에 사용하는 GMS 염색에서 주 시약은?", ["Congo red","acid fuchsin","aniline blue","Schiff solution","methenamine silver"], 4, "GMS는 Grocott's methenamine silver 염색입니다."],
+        ["[51회 61번] 면역조직화학염색에서 절편을 가열 처리하는 목적은?", ["기질의 발색","항원성의 부활","비특이반응 억제","내인성 과산화효소 활성 억제","내인성 알칼리인산분해효소 활성 억제"], 1, "포르말린 고정으로 가려진 항원결정기를 노출시키기 위한 열유도 항원성 부활(HIER) 과정입니다."],
+        ["[51회 62번] 전자현미경 표본 제작에서 사용하는 포매제는?", ["파라핀","셀로이딘","카보왁스","에폭시수지","OCT compound"], 3, "전자현미경 초박절편 제작에는 에폭시수지(Epon 등)를 포매제로 사용합니다."],
+        ["[53회 41번] 조직이나 장기를 구성하는 세포의 크기나 수가 감소하는 변화는?", ["위축","화생","증식","비대","이형성"], 0, "정상 발육했던 장기나 조직의 크기가 줄어드는 현상은 위축(Atrophy)입니다."],
+        ["[53회 43번] 정상에서는 분열하지 않으나 일정 부분이 손상되었을 때 세포분열을 하는 안정세포(stable cell)는?", ["간세포","모낭세포","심근세포","신경세포","골격근세포"], 0, "간세포, 신장 세뇨관 상피세포, 섬유모세포 등은 평소엔 정지기(G0)에 있다가 손상 시 재생하는 안정세포입니다."],
+        ["[53회 44번] 뼈나 근육 같은 비상피성(간엽성) 조직에 발생하는 악성종양은?", ["육종","샘종","지방종","섬유종","유두종"], 0, "비상피성 결합조직 기원의 악성종양은 육종(Sarcoma)이라 부릅니다."],
+        ["[53회 45번] 염색체 검사에서 성염색체 수에 이상이 나타나고, 45,X 핵형을 보이는 유전질환은?", ["다운증후군","터너증후군","파타우증후군","에드워드증후군","고양이울음증후군"], 1, "45,X 성염색체 단일성 질환은 터너증후군입니다."],
+        ["[53회 47번] 다핵세포이며 용해소체가 풍부하고 뼈의 흡수에 관여하는 세포는?", ["뼈세포","뼈모세포","뼈파괴세포(osteoclast)","뼈면세포","뼈선조세포"], 2, "뼈파괴세포(파골세포, Osteoclast)는 다핵거대세포로 골 흡수(칼슘 유리)를 담당합니다."],
+        ["[53회 51번] 자궁목에서 종양을 진단할 뿐만 아니라 조기암을 제거할 목적으로 사용되는 생검법은?", ["소파생검","원뿔생검","액상생검","바늘생검","내시경생검"], 1, "자궁경부(자궁목) 상피내암 등의 진단 및 치료 목적으로 원추형으로 절제하는 원뿔생검(Conization)입니다."],
+        ["[53회 52번] 수술실에서 폐조직을 의뢰했다. 허파꽈리 구조를 유지하기 위한 고정 방법은?", ["증기고정","가열고정","주입고정","관류고정","마이크로파고정"], 2, "폐조직은 기관지를 통해 포르말린을 주입하여 폐포를 팽창시키는 주입고정을 실시합니다."],
+        ["[53회 53번] 가장 낮은 온도(-30℃ 이하)에서 동결박절이 필요한 조직은?", ["뇌","골수","지방","피부","림프절"], 2, "지방이 많은 조직은 어는점이 낮아 -25 ~ -30℃ 이하의 가장 낮은 온도에서 동결박절해야 합니다."],
+        ["[53회 54번] 수술 중 응급검사, 지질 및 효소 증명을 위한 동결절편 제작에 필요한 포매제는?", ["파라핀","셀로이딘","카보왁스","에폭시수지","OCT 컴파운드"], 4, "동결절편 제작 시 수용성 합성수지인 OCT compound를 포매제로 사용합니다."],
+        ["[53회 57번] 고모리 그물섬유(Gomori reticular fiber) 염색에서 염화금(gold chloride)의 작용은?", ["조색","산화","환원","매염","감작"], 0, "염화금은 은 입자를 금으로 치환하여 배경을 깨끗하게 하고 흑자색으로 색상을 안정화시키는 조색(toning) 작용을 합니다."],
+        ["[53회 58번] 간 침생검 조직에서 간섬유화(아교섬유) 정도를 확인하기 위한 특수염색법은?", ["PAS","마손 삼색(Masson trichrome)","PAMS","PTAH","Verhoeff"], 1, "아교섬유(콜라겐) 증식을 청색으로 염색해 간경변·섬유화를 평가하는 염색은 Masson trichrome입니다."],
+        ["[53회 60번] H&E 염색에서 색소가 침착되었고, 프러시안 블루에 염색되지 않으며, 폰타나 마손(Fontana-Masson)에 흑갈색으로 염색되는 물질은?", ["칼슘","멜라닌","유전분","혈철소","빌리루빈"], 1, "멜라닌 색소는 은환원성을 가져 Fontana-Masson 도은법에 흑갈색~흑색으로 염색됩니다."],
+        ["[53회 61번] 면역조직화학염색에서 적색(red)으로 발색되며, 알코올 용해성으로 탈수 과정을 거치면 색이 소실되는 HRP 기질 발색제는?", ["DAB","CN","AEC(3-Amino-9-ethylcarbazole)","NABP/FR","BCIP/NBT"], 2, "AEC는 적색으로 발색되며 알코올에 녹으므로 수용성 봉입제를 사용해야 합니다. (DAB는 갈색, 불용성)"],
+        ["[53회 62번] 전자현미경검사를 위한 초미세박절편(초박절편)의 두께로 적절한 것은?", ["5~10 nm","20~30 nm","40~50 nm","60~90 nm","120~150 nm"], 3, "투과전자현미경(TEM) 관찰을 위한 초박절편의 표준 두께는 약 60~90 nm(은백색~금색 간섭색)입니다."],
+        ["[50회 3교시 4번] H&E 염색을 하는 조직자동염색기에서 염색 순서로 옳은 것은?", ["탈파라핀-함수-염색-탈수-투명","탈파라핀-함수-투명-염색-탈수","탈파라핀-탈수-염색-투명-함수","탈파라핀-탈수-투명-염색-함수","탈파라핀-탈수-염색-함수-투명"], 0, "파라핀 절편의 H&E 염색은 탈파라핀 → 함수 → 염색(핵-분별-청색화-세포질) → 탈수 → 투명 → 봉입 순으로 진행합니다."],
+        ["[50회 3교시 9번] 투과전자현미경(TEM) 표본 제작 시 1차 고정에 사용하는 대표적인 고정액은?", ["Bouin","Carnoy","Helly","Zenker","glutaraldehyde"], 4, "전자현미경 표본 제작의 1차 고정에는 글루타르알데하이드(glutaraldehyde), 2차 고정에는 사산화오스뮴(OsO4)을 사용합니다."]
+    ]),
+
+    // 7. 세포병리학 (50·51·53회 1교시 63~70번 및 3교시 실기 = 28문항)
+    cytopathology: buildQuestions([
+        ["[50회 63번] 조직학적검사에 비교하여 세포학적검사의 장점은?", ["최종 확정 진단","검체의 반복 채취 가능","병변의 정확한 위치 파악","병변의 명확한 크기 파악","병변의 유형을 명확하게 구별"], 1, "세포학적 검사는 비침습적이어서 반복 채취가 가능합니다."],
+        ["[50회 64번] 뇌척수액(CSF), 소변(urine) 등과 같이 세포의 양이 적고, 슬라이드 접착성이 낮은 검체의 적절한 표본제작 방법은?", ["날인도말법","압착도말법","직접도말법","세포원심침전법","세포군집절편법"], 3, "세포원심침전법(Cytospin)을 사용합니다."],
+        ["[50회 65번] Papanicolaou 염색에서 EA(eosin-azure) 용액에 포함되는 염료는?", ["carmine","light green","aniline blue","hematoxylin","basic fuchsin"], 1, "EA 용액에는 Eosin Y, Light green SF yellowish, Bismarck brown Y가 포함됩니다."],
+        ["[50회 66번] 부인과 세포도말 표본에서 [농축성 핵, 가장 낮은 N/C 비율, 호산성 세포질] 특징을 보이는 세포는?", ["무핵세포","표층세포(표재세포)","중간세포","기저곁세포","기저세포"], 1, "표층편평상피세포(Superficial cell)입니다."],
+        ["[50회 67번] 마지막 월경주기(LMP)가 12월 24일이고, 검체 채취일이 1월 6일일 경우 해당되는 주기는?", ["월경기","증식기","배란기","분비기","임신기"], 2, "월경 시작 14일째이므로 배란기입니다."],
+        ["[50회 68번] [방사상의 털뭉치 모양, 고름 내 유황과립 함유, 자궁내피임장치(IUD) 착용] 특징을 갖는 감염원은?", ["방선균(Actinomyces)","칸디다","질가드네렐라","질트리코모나스","단순포진 바이러스"], 0, "IUD 장기 착용자와 연관된 방선균(Actinomyces)입니다."],
+        ["[50회 69번] 부인과 세포도말 표본에서 [감자모양의 핵, 뚜렷한 핵소체, 세포의 대소부동, 배경에 종양소인 관찰] 특징을 보이는 세포학적 진단은?", ["양성 세포성 변화","저등급 편평상피내병변","고등급 편평상피내병변","각화성 편평세포암종","비각화성 대세포 편평세포암종"], 4, "뚜렷한 핵소체와 종양소인(tumor diathesis)은 비각화성 대세포 편평세포암종의 특징입니다."],
+        ["[50회 70번] 부인과 세포도말 표본에서 공동세포(koilocyte)가 관찰되었을 경우 베데스다 분류체계는?", ["정상 범위(NILM)","저등급 편평상피내병변(LSIL)","고등급 편평상피내병변(HSIL)","편평세포암종","샘암종"], 1, "공동세포는 LSIL(저등급 편평상피내병변)로 분류됩니다."],
+        ["[51회 63번] 세포학적 검사에 비해 파라핀 블록을 이용한 조직학적 검사의 장점은?", ["신속, 간편함","반복 채취 가능","호르몬 평가 가능","최종 확정 진단 가능","환자의 정신적 부담 경감"], 3, "조직생검은 병변의 침윤 여부와 구조적 관계를 파악하여 최종 확정 진단이 가능합니다."],
+        ["[51회 64번] 생검 조직의 병터(병소) 부위를 살짝 눌러 슬라이드에 직접 도말하는 방법은?", ["날인도말법","질풀도말법","찰과도말법","VCE도말법","커버글라스도말법"], 0, "절제한 조직의 단면을 슬라이드에 도장 찍듯 접촉시키는 날인도말법(Imprint smear)입니다."],
+        ["[51회 65번] 부인과적 검체 채취 후 막여과법으로, 분산·수집·이전의 방법을 이용하는 세포 검사법은?", ["압착도말법","찰과도말법","액상세포검사법","세포군집절편법","세포원심침전법"], 2, "ThinPrep 등 막여과법을 이용한 액상세포검사법(Liquid-based cytology)입니다."],
+        ["[51회 66번] 정상 여성의 자궁-질 도말표본에서 월경 후 증식기(6~10일)에 자궁내막세포가 집단으로 탈락하는 현상은?", ["진주현상","이주현상","식인현상","모세관현상","모자이크현상"], 1, "월경 직후~증식기 초(6~10일)에 자궁내막세포 군집(exodus)이 탈락하는 현상을 이주현상이라 합니다."],
+        ["[51회 67번] 여성생식기관에서 가려움증과 동통을 일으키고, 도말상에서 거짓균사, 포자가 특징인 미생물은?", ["임균","방선균","칸디다","질편모충","렙토트릭스"], 2, "칸디다(Candida albicans)는 거짓균사(pseudohyphae)와 발아포자를 형성하는 진균입니다."],
+        ["[51회 68번] 사람유두종바이러스(HPV)에 감염된 세포에서 나타나는 특징은?", ["공동세포","실마리세포","포말상 세포질","젖빛유리 양상","세포질내 봉입체"], 0, "HPV 감염 시 핵주위 공동화(halo)와 건포도 모양 핵을 가진 공동세포(Koilocyte)가 나타납니다."],
+        ["[51회 69번] N/C ratio가 높은 농축핵과 호산성 세포질이 관찰되며, 세포의 모양이 올챙이형(tadpole), 방추형(spindle) 등의 형태를 보이는 소견은?", ["화생","경도 이형성증","중등도 이형성증","고도 이형성증","각화성편평세포암종"], 4, "오렌지색(OG-6 친화성) 세포질과 올챙이세포·방추형세포·먹물핵이 나타나는 암종은 각화성 편평세포암종입니다."],
+        ["[51회 70번] 베데스다 분류법(TBS) 중 1단계 검체적합성으로, 객담에서 확인해야 하는 세포는?", ["중피세포","쿠퍼세포","형질세포","먼지세포","미세아교세포"], 3, "객담(가래)이 하기도에서 제대로 채취되었는지 확인하는 지표는 폐포대식세포인 먼지세포(Dust cell)입니다."],
+        ["[53회 63번] 22~23게이지의 가는바늘(fine needle)로 병소에 직접 세포를 채취하여 진단적 가치를 높이는 검사는?", ["찰과검사","밀착도말검사","날인도말검사","탈락세포검사","세침천자흡인검사"], 4, "갑상샘, 유방, 림프절 등의 종괴에서 가는 바늘로 세포를 흡인하는 세침천자흡인검사(FNAC)입니다."],
+        ["[53회 64번] 검체의 적합성을 확인하기 위해 객담 검체에 포함되어야 할 세포는?", ["먼지세포","비만세포","술잔세포","중피세포","형질세포"], 0, "먼지세포(탄분탐식 조직구)가 관찰되어야 적합한 객담 검체입니다."],
+        ["[53회 65번] 위음성 진단율을 줄이기 위해 슬라이드 도말 후 남은 침전 검사물을 모아 파라핀 블록으로 제작하는 방법은?", ["세포농축법","세포원심침전법","세포군집절편법","액상세포검사법","커버슬라이드도말법"], 2, "남은 침전물을 원심침전시켜 파라핀 블록으로 만드는 세포군집절편법(Cell block)입니다."],
+        ["[53회 66번] 혈중 프로게스테론의 농도가 높은 분비기나 임신기에 많이 출현하고, 세포질 내 당원(glycogen)이 침착되어 세포의 가장자리가 두꺼운 배 모양의 세포는?", ["거미세포","술잔세포","형질세포","주상세포","대식세포"], 3, "임신기나 분비기에 프로게스테론 작용으로 출현하는 배 모양의 중간세포는 주상세포(Navicular cell)입니다."],
+        ["[53회 67번] 자궁-질 도말표본에서 [깨끗한 도말 배경, 성숙지수(MI) 0:0:100, 마지막 월경일부터 14일째 채취] 특징이 나타나는 월경주기는?", ["월경기","배란기","증식기","분비기","폐경기"], 1, "에스트로겐이 최고조에 달해 표층세포가 우세하고 배경이 깨끗한 시기는 배란기입니다."],
+        ["[53회 68번] 자궁-질 도말 표본에서 [서양배 모양, 희미한 충체, 포탄볼(cannonball) 형성, 핵주위 투명대, Leptothrichia와 함께 출현, 호에오신성 과립]에 해당하는 것은?", ["임균","젖산균","칸디다","질가드네렐라","질트리코모나스"], 4, "질트리코모나스(Trichomonas vaginalis) 원충 감염의 전형적인 세포학적 소견입니다."],
+        ["[53회 69번] 자궁-질 도말표본에서 HPV에 감염되었을 때 특이적으로 보이는 세포는?", ["공동세포","수복세포","예비세포","주상세포","다핵거대조직구"], 0, "공동세포(Koilocyte)입니다."],
+        ["[53회 70번] 베데스다 분류법(TBS)에서 45세 이상 여성의 자궁목 세포 판독 시 보고해야 하는 세포는?", ["표재세포","중간세포","외자궁경부세포","자궁내막세포(endometrial cell)","다형핵백혈구"], 3, "45세 이상 여성의 자궁경부 도말에서 양성 자궁내막세포가 관찰되면 자궁내막 증식증이나 암종 배제를 위해 반드시 보고해야 합니다."],
+        ["[50회 3교시 12번] Papanicolaou 염색에서 각화성 세포질과 글리코겐을 오렌지색으로 염색하는 시약은?", ["ethanol","hematoxylin","OG-6","EA-50","xylene"], 2, "OG-6(Orange G)는 각화성 편평상피암종 세포질을 선명한 오렌지색으로 염색합니다."],
+        ["[51회 3교시 12번] 자궁-질 도말을 Papanicolaou 염색한 표본에서 세포 표면에 갈색 공기방울이 얹히는 인공산물(cornflaking)의 원인은?", ["전고정액으로 고정","자일렌 사용 후 건조","적정시간 이상 청색화","EA50 염색액에서 장시간 염색","불완전 탈수 단계에서 장시간 방치"], 1, "투명 과정(자일렌) 후 봉입하기 전에 절편이 공기 중에 건조되면 세포 위에 갈색 입자가 끼는 콘플레이킹(cornflaking) 현상이 발생합니다."]
+    ]),
+
+    // 8. 생리기능학 (50·51·53회 1교시 71~100번 텍스트 문항 = 45문항)
+    physiologicalTest: buildQuestions([
+        ["[50회 71번] 심장근육세포의 막전위 차이에 의해 발생되는 전기적 현상을 체표면에 부착한 전극을 통해 기록하는 심장기능검사는?", ["맥파","근전도","심전도","신경전도","기립경사도"], 2, "심전도(ECG) 검사입니다."],
+        ["[50회 72번] [1회 심장 주기, 심장박동수 측정, 성인의 정상 시간 0.6~1.0초]에 해당하는 심전도 파형은?", ["PR 간격","QT 간격","RR 간격","ST 분절","TP 분절"], 2, "RR 간격입니다."],
+        ["[50회 73번] [방실흥분전도시간, 성인 정상 시간 0.12~0.20초 이내, 심방 탈분극 시작부터 심실 탈분극 시작까지 시간]에 해당하는 심전도 파형은?", ["P파","QRS군","ST 분절","PR 간격","QT 간격"], 3, "PR 간격(PQ 간격)입니다."],
+        ["[50회 74번] 심전도 표준12유도법에서 왼손과 왼발 사이의 전위차를 기록하는 유도는?", ["I","II","III","aVR","V2"], 2, "표준사지유도 III은 왼손(LA)과 왼발(LL) 사이의 전위차를 기록합니다."],
+        ["[50회 75번] [심방과 심실 사이의 전도 차단, QRS군을 동반하지 않는 P파 출현, PR 간격이 점차 연장되다가 QRS군 탈락] 특징을 보이는 것은?", ["동빈맥","동정지","심방세동","우심실비대","2도 방실차단 모비츠 1형"], 4, "PR 간격이 점차 길어지다 QRS가 탈락하는 것은 2도 방실차단 모비츠 1형(Wenckebach형)입니다."],
+        ["[50회 76번] 심전도 기록 시, 왼발에 힘이 들어간 경우 근전도가 혼입되는 단극사지유도는?", ["I","V3","aVL","aVR","aVF"], 4, "왼발(Foot) 전극은 aVF 유도입니다."],
+        ["[50회 77번] 심전도 기록지에서 RR간격이 큰 칸 5칸인 경우 심박동수는? (기록속도 25mm/sec)", ["60회/분","70회/분","80회/분","90회/분","100회/분"], 0, "300 ÷ 5(큰 칸) = 60회/분입니다."],
+        ["[50회 79번] [제세동장치 비치, 회전하는 벨트 위를 보행, 주로 Bruce 프로토콜 이용]하는 심전도 검사는?", ["심음도","기립경사도","동맥경화도","답차운동부하","24시간 심전도"], 3, "답차운동부하(Treadmill) 심전도 검사입니다."],
+        ["[50회 81번] [꿈을 꾼다, 빠른 안구 운동, 자율신경기능 변화]가 나타나는 정상 성인 수면 단계는?", ["수면 1단계","수면 2단계","수면 3단계","수면 4단계","렘(REM) 수면기"], 4, "렘(REM) 수면기입니다."],
+        ["[50회 82번] 10-20법의 뇌파전극 배치법에서 코뿌리점과 뒤통수점의 정중앙에 위치하는 기준점은?", ["Cz","C3","T3","P3","Fp2"], 0, "정중중심부(Cz)입니다."],
+        ["[50회 83번] [알파파 억제(α-blocking), 이마부에 인공산물 혼입, 기면증 진단에 유용] 특징을 가지는 뇌파 유발법은?", ["청각","과호흡","저산소","섬광자극","눈뜨기·눈감기"], 4, "눈뜨기·눈감기(개폐안) 유발법입니다."],
+        ["[50회 84번] 뇌파 기록 중 관자 부위에 근전도 혼입 시 해결 방법은?", ["검사실 온도를 낮춘다.","검사실 습도를 올린다.","피검자의 호흡을 고르게 한다.","교류장애 제거장치를 확인한다.","피검자의 입을 약간 벌리게 한다."], 4, "어금니를 깨물어 관자근이 긴장된 것이므로 입을 약간 벌리게 합니다."],
+        ["[50회 86번] [말초신경병증, 중증근무력증, 수근관증후군] 질환을 진단하기 위한 생리기능검사는?", ["뇌파","심전도","신경전도","수면다원","심장초음파"], 2, "신경전도검사(NCS)입니다."],
+        ["[50회 88번] [기록전극은 뒤통수부 부착, P100 잠복기가 진단에 중요, 100회 자극을 2회 이상 반복 평균화] 특징을 가지는 검사법은?", ["시각유발전위","운동유발전위","자극유발전위","몸감각유발전위","뇌줄기청각유발전위"], 0, "시각유발전위(VEP) 검사입니다."],
+        ["[50회 90번] [정상 성인 폐용량 약 4,800 mL, 1회 호흡량(TV) + 들숨예비량(IRV) + 날숨예비량(ERV)] 특징을 가지는 폐기능 검사 항목은?", ["잔기량(RV)","폐활량(VC)","들숨용량(IC)","총폐용량(TLC)","기능적 잔기용량(FRC)"], 1, "폐활량(Vital Capacity, VC)입니다."],
+        ["[50회 93번] 허파꽈리에서 허파꽈리모세혈관으로의 가스 이동 능력을 측정하는 검사법은?", ["폐용적","폐활량","폐확산능","기도저항","기관지과민성"], 2, "폐확산능(DLco) 검사입니다."],
+        ["[50회 94번] [회전의자검사, 동적자세검사, 비디오 안진검사]가 포함되는 생리기능검사는?", ["청각","골밀도","평형기능","동맥경화도","망막전위도"], 2, "평형기능(전정기능) 검사입니다."],
+        ["[51회 71번] 심장활동전위곡선에서 고원기(phase 2, plateau)에 해당하는 심전도 파형은?", ["P파","QRS군","PR 간격","ST 분절","QT 간격"], 3, "심실근 활동전위의 제2상(고원기)은 심전도에서 등전위선인 ST 분절에 해당합니다."],
+        ["[51회 72번] 심전도 II, III, aVF 유도에 근전도가 혼입되었다. 점검해야 할 부위는?", ["왼손","왼발","복장뼈","오른손","오른발"], 1, "유도 II, III, aVF는 모두 왼발(LL) 전극이 관여하는 하벽 유도이므로 왼발을 점검합니다."],
+        ["[51회 74번] [정상성인의 P파, QRS군, T파 모두 음성 / 관전극(오른손)과 불관전극 사이의 전위차 기록]에서 설명하는 심전도 유도는?", ["I","II","aVR","aVL","V6"], 2, "오른손을 양극으로 하는 aVR 유도에서는 심장의 전기축과 반대 방향이므로 P, QRS, T파가 모두 음성으로 기록됩니다."],
+        ["[51회 75번] [P파 소실, 폭 넓은 QRS군, 보상성 휴지기, QRS군과 반대 방향의 T파] 심전도 소견이 나타났을 때 알 수 있는 것은?", ["각차단","동정지","방실차단","심근경색증","심실조기수축"], 4, "선행 P파 없이 넓고 기형적인 QRS군이 조기에 출현하고 완전 보상성 휴지기가 뒤따르는 부정맥은 심실조기수축(PVC)입니다."],
+        ["[51회 76번] 심전도에서 표준감도가 1.0(10mm/mV)일 때 10mm의 전위값은?", ["1.0 mV","0.5 mV","0.1 mV","1.0 μV","0.5 μV"], 0, "표준감도에서 세로축 10mm(큰 칸 2칸)는 1.0 mV입니다."],
+        ["[51회 77번] 굵은 실선 위에 겹쳐 있는 R파를 기준으로 5번째 굵은 실선에 다음 R파가 출현하였을 때 간편법으로 계산 시 심박동수는? (기록속도 25mm/sec)", ["40회/분","50회/분","60회/분","70회/분","100회/분"], 2, "300 ÷ 5 = 60회/분입니다."],
+        ["[51회 78번] [쌍극가슴유도, 2채널 및 3채널 검사법, 일과성 부정맥 추정에 용이] 특징을 가지는 심전도 검사는?", ["약물부하","저산소부하","마스터 2계단","24시간 심전도","답차운동부하"], 3, "일상생활 중 쌍극흉부유도를 부착해 일과성 부정맥을 잡아내는 검사는 24시간 활동심전도(Holter monitoring)입니다."],
+        ["[51회 79번] [잠재성 심장동맥질환(협심증) 진단, ST 분절 하강이 중요한 진단 기준]으로 알 수 있는 검사법은?", ["심음도","심박변이도","24시간 혈압","답차운동부하","목동맥초음파"], 3, "답차운동부하 심전도검사입니다."],
+        ["[51회 80번] [각성 시 나타남, 긴장하거나 집중할 때 및 약물 복용 시 광범위하게 증가] 특징을 보이는 뇌파 파형은?", ["알파(α)파","베타(β)파","세타(θ)파","델타(δ)파","K-복합파"], 1, "14~30Hz의 속파인 베타(β)파입니다."],
+        ["[51회 81번] [날카로운 모양의 파형, 지속시간이 80~200 msec]인 비정상 뇌전증모양 뇌파 파형은?", ["예파","극파","느린파","3상성파","예·느린파 복합"], 0, "지속시간이 20~70ms이면 극파(spike), 70~200ms(80~200ms)이면 예파(sharp wave)입니다."],
+        ["[51회 82번] 10-20법에서 [시각영역에 해당됨, α파 율동이 우세하게 나타남]에 해당하는 뇌파 전극 부착 위치는?", ["C3, C4","F3, F4","O1, O2","P3, P4","Fp1, Fp2"], 2, "시각피질이 있고 알파파가 우세한 뒤통수부(후두부) 전극은 O1, O2입니다."],
+        ["[51회 86번] 정상성인의 신경전도검사에서 말단 잠복기가 연장되었을 때 해결 방법은?", ["전극을 교체한다.","증폭기를 확인한다.","호흡 안정을 유도한다.","피부의 온도를 올려준다.","주변 전자기기를 확인한다."], 3, "피부 온도가 낮으면 신경전도속도가 느려지고 잠복기가 연장되므로 사지의 피부 온도를 따뜻하게(32~34℃ 이상) 올려줍니다."],
+        ["[51회 87번] 운동신경전도검사에서 짧은발가락폄근(EDB)에 기록(활성)전극을 부착하여 측정하는 신경은?", ["자신경","궁둥신경","장딴지신경","뒤정강신경","온종아리신경"], 4, "온종아리신경(총비골신경, Common peroneal nerve) 운동신경전도검사 시 기록전극을 발등의 짧은발가락폄근(EDB)에 부착합니다."],
+        ["[51회 92번] 폐쇄성 환기장애의 판정기준은?", ["%폐활량 80% 이하, 1초율 70% 이하","%폐활량 80% 이상, 1초율 70% 이상","%폐활량 80% 이하, 1초율 70% 이상","%폐활량 80% 이상, 1초율 70% 이하","%폐활량 50% 이하, 1초율 60% 이상"], 3, "폐쇄성 환기장애는 %폐활량(%VC 또는 %FVC)은 80% 이상으로 정상이나 1초율(FEV1/FVC)이 70% 미만으로 감소합니다."],
+        ["[51회 93번] 기관지 과민성 유발검사에서 양성 판정에 사용하는 공기량은?", ["1초량(FEV1.0)","총폐용량(TLC)","일회호흡량(TV)","들숨예비량(IRV)","기능적잔기용량(FRC)"], 0, "메타콜린 흡입 후 1초량(FEV1.0)이 기저치보다 20% 이상 감소하는 농도(PC20)로 기관지 과민성을 판정합니다."],
+        ["[51회 94번] [혈량측정법, 혈압지수 검사(ABI), 맥파전파속도 검사(PWV)] 측정항목을 포함하는 검사는?", ["체열 검사","기립경사도 검사","알레르기반응 검사","동맥경화도진단 검사","몸감각유발전위 검사"], 3, "발목위팔혈압지수(ABI)와 맥파전파속도(PWV)는 동맥경화도(말초혈관질환) 진단 검사입니다."],
+        ["[51회 99번] 두개경유 도플러 검사(TCD)에서 [(수축기 혈류속도 - 확장기 혈류속도) / 평균 혈류속도] 공식으로 구할 수 있는 측정지표는?", ["저항 지수","박동성 지수","혈류 가속도","평균 혈류속도","대뇌반구 지수"], 1, "Gosling의 박동성 지수(Pulsatility Index, PI) 공식입니다. (분모가 수축기 혈류속도이면 저항지수 RI)"],
+        ["[53회 72번] 증폭단극팔다리유도에서 오른손을 양극(+)으로 하는 유도는?", ["I","II","III","aVR","aVF"], 3, "오른손(Right arm)을 양극으로 하는 유도는 aVR입니다."],
+        ["[53회 73번] [PR 간격 단축, QRS 폭 연장, QRS 시작부위에 심실조기흥분을 반영하는 델타(delta)파 생성] 심전도 소견은?", ["심방세동","고칼륨혈증","좌심방확대","WPW증후군","1도 방실차단"], 3, "켄트속(Kent bundle) 부전도로에 의한 조기흥분증후군인 WPW 증후군의 특징입니다."],
+        ["[53회 76번] 24시간(홀터) 심전도검사의 목적은?", ["뇌전증","골다공증","동맥경화증","중증근무력증","일과성 부정맥"], 4, "안정 시 표준심전도에서 발견하기 힘든 일과성 부정맥이나 이형협심증을 진단합니다."],
+        ["[53회 77번] 정상 성인의 뇌파검사에서 [후두부 우세, 진폭의 점증·점감(waxing & waning) 현상, 안정·각성·눈감기 상태] 특징을 보이는 뇌파는?", ["α파","β파","θ파","δ파","γ파"], 0, "8~13Hz의 알파(α)파입니다."],
+        ["[53회 78번] 수면뇌파 단계에서 수면방추파(sleep spindle)와 K-complex 및 이상파의 출현이 증가하는 시기는?", ["각성기(stage W)","얕은수면기(stage II)","중등도수면기(stage III)","깊은수면기(stage IV)","렘수면기(stage REM)"], 1, "수면 2단계(얕은수면기, stage N2)에서 수면방추파와 K-복합파가 특징적으로 출현합니다."],
+        ["[53회 80번] [각성 상태를 확인, 알파억제(α-blocking) 현상, 안정·각성 상태에서 5~10초간 실시] 특징을 갖는 뇌파검사 유발법은?", ["수면","과호흡","광자극","청각자극","눈뜨기·눈감기"], 4, "눈뜨기·눈감기 유발법입니다."],
+        ["[53회 81번] 뇌파 기록 중 뇌파 성분 이외의 극파(spike)로 오인할 가능성이 가장 높은 생체 인공산물은?", ["맥파","심전도","호흡운동","안구운동","바닥선동요"], 1, "심전도(ECG)의 R파가 혼입되면 규칙적인 극파(spike)로 오인하기 쉽습니다."],
+        ["[53회 85번] [척수 몸쪽 병변을 평가함, 최대상자극강도로 10회 이상 자극, 자극이 운동신경을 역행하여 척수앞뿔세포를 재흥분시킴] 신경전도검사 파형은?", ["E파","F파","H파","M파","P파"], 1, "운동신경을 역행성으로 타고 올라가 척수전각세포를 흥분시켜 되돌아오는 후기 반응 파형은 F파(F-wave)입니다."],
+        ["[53회 86번] 다음 중 후두부 반응 및 P100 잠복기와 관련 깊은 검사는?", ["시각유발전위","눈깜박반사검사","몸감각유발전위","반복신경자극검사","뇌줄기청각유발전위"], 0, "시각유발전위(VEP)입니다."],
+        ["[53회 90번] 폐활량검사에서 1초율은 60%, %강제폐활량은 85% 이상일 경우 환기 유형은?", ["정상","과다환기장애","제한환기장애","폐쇄환기장애","혼합환기장애"], 3, "%FVC ≥ 80%이고 1초율(FEV1/FVC) < 70%이므로 폐쇄환기장애입니다."],
+        ["[53회 91번] 다음 중 폐포기능검사(가스교환능력)에 해당하는 것은?", ["폐활량(VC)검사","기도저항(Raw)검사","폐확산능(DLco)검사","강제폐활량(FVC)검사","최대환기량(MVV)검사"], 2, "폐확산능(DLco) 검사입니다."],
+        ["[53회 92번] [안진검사, 비디오 안구운동 검사, 어지럼의 객관적 평가] 특징을 갖는 생리기능검사는?", ["기립경사검사","수면다원검사","유발전위검사","평형기능검사","기관지과민성검사"], 3, "평형기능검사입니다."],
+        ["[53회 93번] [어음검사, 순음검사, 점증현상검사] 종류로 알 수 있는 생리기능검사는?", ["시각기능","미각기능","청각기능","평형기능","안뜰(전정)기능"], 2, "순음청력검사(PTA)와 어음청력검사는 청각기능검사입니다."],
+        ["[53회 94번] 임상 진단용 초음파의 주파수 범위는?", ["2~5 kHz","1~10 kHz","1~10 MHz","30~50 kHz","30~50 MHz"], 2, "진단용 초음파는 주로 1~10 MHz(또는 2~15 MHz) 대역의 주파수를 사용합니다."],
+        ["[53회 100번] 머리뼈경유도플러검사(TCD)에서 뇌바닥동맥(basilar artery)을 검사할 때 탐촉자(probe)의 위치는?", ["후두밑창(suboccipital window)","턱밑창(submandibular window)","안와경유창(transorbital window)","전두경유창","측두경유창(transtemporal window)"], 0, "척추동맥(VA)과 뇌바닥동맥(BA)은 목 뒤쪽의 후두밑창(뒤통수밑창)을 통해 검사합니다."]
+    ]),
+
+    // 9. 임상화학 (53회 2교시 1~38번 + 50·51회 3교시 실기 = 46문항)
+    clinicalChem: buildQuestions([
+        ["[53회 2교시 1번] 해당과정 효소인 에놀라아제(enolase)의 활성을 억제하는 혈당검사용 첨가제는?", ["EDTA","플루오린화나트륨(NaF)","헤파린리튬","옥살산나트륨","시트르산나트륨"], 1, "플루오린화나트륨(NaF, 회색 마개)은 에놀라아제를 억제하여 혈구 세포의 해당작용(포도당 소모)을 방지합니다."],
+        ["[53회 2교시 2번] 1.0M 포도당 용액 500mL을 만들려면 포도당은 몇 g이 필요한가? (단, 포도당 분자량은 180)", ["30","60","90","180","360"], 2, "1.0M 1L(1,000mL)에 180g이 필요하므로, 500mL(0.5L)를 만들려면 180 × 0.5 = 90g이 필요합니다."],
+        ["[53회 2교시 3번] 내부정도관리에서 동일한 환자의 이전 검사 결과와 현재 검사 결과를 비교하여 오류를 점검하는 것은?", ["변이계수(CV)","변이지수점수(VIS)","표준편차지수(SDI)","변화치 검색(delta check)","경고치 검색(panic check)"], 3, "동일 환자의 이전 결과와 현재 결과의 차이를 비교하는 방법은 델타 체크(delta check, 변화치 검색)입니다."],
+        ["[53회 2교시 4번] 측정값과 참값 간의 차이를 의미하는 정도관리 용어는?", ["평균(mean)","범위(range)","치우침(bias)","최빈값(mode)","중앙값(median)"], 2, "측정값과 참값의 차이(정확도의 척도)는 치우침(bias, 바이어스)입니다."],
+        ["[53회 2교시 5번] 자동화학분석기 검사수행 과정 [검체 → 시약첨가 → 항온반응 → ( ) → 결과전송]에서 빈칸에 해당하는 것은?", ["시약혼합(mixer)","광도측정(photometer)","원심분리(centrifuge)","자동피펫(autopipette)","검체인식(barcode reader)"], 1, "항온반응 후 흡광도를 측정하는 광도측정(photometer) 단계가 진행됩니다."],
+        ["[53회 2교시 6번] 광원 없이 [루미놀, 이소루미놀, 아크리디늄 에스터] 물질을 산화반응에 이용하는 분석법은?", ["분광","형광","반사광","산란광","화학발광"], 4, "화학 반응 에너지를 빛으로 방출하는 화학발광측정법(Chemiluminescence)입니다."],
+        ["[53회 2교시 7번] 투과율(%T)이 100일 때 흡광도(A)는 얼마인가?", ["0","0.1","2","10","100"], 0, "흡광도 A = 2 - log(%T) = 2 - log(100) = 2 - 2 = 0입니다."],
+        ["[53회 2교시 8번] 가스크로마토그래피(GC)의 고정상으로, 혼합물을 단일성분으로 분리하는 장치는?", ["슬릿(slit)","오븐(oven)","펌프(pump)","칼럼(column)","큐벳(cuvette)"], 3, "크로마토그래피에서 고정상이 충진되어 성분 분리가 일어나는 곳은 분리관인 칼럼(column)입니다."],
+        ["[53회 2교시 9번] pCO2 전극(Severinghaus 전극) 안의 유리막에서 선택적으로 측정되는 것은?", ["K+","H+","Cl-","Cu2+","Hg2+"], 1, "pCO2 전극은 가스투과막을 통과한 CO2가 중탄산염 완충액과 반응해 생성된 수소이온(H+) 농도(pH 변화)를 유리전극으로 측정합니다."],
+        ["[53회 2교시 10번] 혈청 단백질 전기영동 결과, 알부민은 감소하고 γ-글로불린이 증가하여 β-글로불린과 분획이 연결(β-γ bridging)되는 질환은?", ["당뇨병","간경화증","급성염증","신증후군","심근경색증"], 1, "간경화증(간경변증)에서는 알부민 합성 감소와 다클론성 IgA 증가로 인한 β-γ 연결(bridging) 현상이 특징입니다."],
+        ["[53회 2교시 11번] [알부민, 트랜스페린, 합토글로빈, 세룰로플라스민] 단백질의 공통 기능은?", ["구조","방어","운반","조절","촉매"], 2, "각각 유리지방산·빌리루빈, 철(Fe), 유리 혈색소(Hb), 구리(Cu)를 혈중에서 운반하는 수송(운반) 단백질입니다."],
+        ["[53회 2교시 12번] 뷰렛(biuret)반응에서 펩타이드 결합 시 자색의 킬레이트 복합체를 형성하는 금속 이온은?", ["Ca2+","Cu2+","Mg2+","Fe2+","Zn2+"], 1, "알칼리성 조건에서 2가 구리이온(Cu2+)이 펩타이드 결합과 반응해 보라색 착화합물을 형성합니다."],
+        ["[53회 2교시 13번] 간기능장애로 혈중에 증가되어 간성혼수(hepatic coma)의 원인이 되는 응급검사는?", ["요산","요소","암모니아","크레아틴","크레아티닌"], 2, "간경화 등으로 요소회로가 손상되면 혈중 암모니아(Ammonia)가 축적되어 뇌독성(간성혼수)을 유발합니다."],
+        ["[53회 2교시 14번] 스테로이드 호르몬의 전구체이며 담즙산을 형성하는 주된 물질은?", ["레시틴","지방산","중성지방","스핑고지질","콜레스테롤"], 4, "콜레스테롤은 스테로이드 호르몬, 담즙산, 비타민 D의 전구체입니다."],
+        ["[53회 2교시 15번] 지질단백질 중 외인성(식이성) 중성지방(TG)이 가장 많이 함유된 것은?", ["킬로미크론(chylomicron)","초저밀도지질단백질(VLDL)","중간밀도지질단백질(IDL)","저밀도지질단백질(LDL)","고밀도지질단백질(HDL)"], 0, "킬로미크론(암죽미립)은 소장에서 흡수한 외인성 중성지방을 85~90% 함유합니다. (내인성 TG는 VLDL)"],
+        ["[53회 2교시 16번] 당뇨병(케톤산증)으로 인해 과잉의 H+가 HCO3-를 소비하여 HCO3-가 감소하는 산-염기 평형의 결과는?", ["정상","대사성 산증","호흡성 산증","대사성 알칼리증","호흡성 알칼리증"], 1, "중탄산염(HCO3-)의 일차적 감소로 pH가 낮아지는 것은 대사성 산증입니다."],
+        ["[53회 2교시 17번] 세포내액에 가장 많은 양이온 전해질로, 용혈 시 혈청에서 급격히 증가하는 것은?", ["구리","아연","칼륨","나트륨","무기인"], 2, "칼륨(K+)은 세포내액의 주된 양이온으로 적혈구 내 농도가 혈장의 약 23배에 달해 용혈 시 현저히 증가합니다."],
+        ["[53회 2교시 18번] 알코올성 간과 약물성 간 장애 및 담도 폐쇄에서 특이적으로 증가하는 효소는?", ["AMS","POD","CK","ACP","GGT(γ-glutamyl transferase)"], 4, "GGT(γ-GT)는 알코올성 간질환 및 미소체 효소 유도(약물 복용) 시 예민하게 상승합니다."],
+        ["[53회 2교시 19번] 효소 분류에서 전달효소(transferase, EC 2군)에 해당하는 것은?", ["lipase","aldolase","amylase","cholinesterase","creatine kinase"], 4, "크레아틴 키나아제(CK)는 인산기를 전달하는 전달효소(Transferase)입니다. (리파아제·아밀라아제·콜린에스테라아제는 가수분해효소, 알돌라아제는 분해효소)"],
+        ["[53회 2교시 20번] 아스파르트산 아미노기 전이효소(AST)와 알라닌 아미노기 전이효소(ALT)의 활성제로 첨가하는 조효소(보조인자)는?", ["시트르산","페록시다아제","수산화나트륨","옥살로아세트산","피리독살-5'-인산"], 4, "AST, ALT의 조효소는 비타민 B6 유도체인 피리독살-5'-인산(Pyridoxal-5'-phosphate, P-5'-P)입니다."],
+        ["[53회 2교시 21번] 체내 포도당에 관한 설명으로 옳은 것은?", ["인슐린은 혈당을 상승시킨다.","정맥혈에 비해 동맥혈 혈당이 낮다.","포도당은 글리코겐 형태로 저장된다.","뇌척수액 포도당 참고값은 혈당과 동일하다.","포도당 투여 2시간 후부터 경구 당부하검사를 한다."], 2, "포도당은 간과 근육에 글리코겐(당원) 형태로 저장됩니다. (뇌척수액 포도당은 혈당의 약 60%)"],
+        ["[53회 2교시 22번] 포도당(glucose)과 과당(fructose)으로 구성된 이당류로, 비환원당은?", ["젖당(lactose)","이눌린(inulin)","설탕(sucrose)","맥아당(maltose)","갈락토스(galactose)"], 2, "설탕(Sucrose, 자당)은 포도당과 과당이 결합한 이당류이며 유리 카보닐기가 없어 환원성이 없는 비환원당입니다."],
+        ["[53회 2교시 23번] 헤모글로빈 β-사슬 N-말단의 발린(valine)이 포도당과 비효소적으로 결합한 것으로, 최근 2~3개월의 혈당 평균치를 반영하는 것은?", ["C-펩타이드","당화혈색소(HbA1c)","프록토사민","경구 당부하검사(OGTT)","1,5-언하이드로글루시톨"], 1, "적혈구 수명(120일)과 관련되어 최근 2~3개월간의 평균 혈당을 반영하는 지표는 당화혈색소(HbA1c)입니다."],
+        ["[53회 2교시 24번] 크롬친화세포종(갈색세포종)이나 신경모세포종 환자의 소변에서 증가하는 카테콜아민 대사산물은?", ["코티솔","티록신","바닐릴만델산(VMA)","알도스테론","5-HIAA"], 2, "부신수질 종양인 갈색세포종에서는 에피네프린·노르에피네프린의 최종 대사산물인 소변 VMA(바닐릴만델산)가 증가합니다."],
+        ["[53회 2교시 25번] 심부전으로 진단한 환자를 치료하기 위해 투여하는 치료적 약물농도 감시(TDM) 대상 강심제 약물은?", ["리튬","디곡신","테오필린","페노바비탈","타크로리무스"], 1, "디곡신(Digoxin)은 치료 범위가 좁은 대표적인 강심배당체 약물입니다."],
+        ["[53회 2교시 26번] 급성심근경색증(AMI) 진단에 이용하는 심장표지자 검사는?", ["C-펩타이드","트로포닌 T(troponin T)","오스테오칼신","알파태아단백질(AFP)","산성인산분해효소"], 1, "심근 특이도가 가장 높은 급성심근경색 표지자는 트로포닌 I(cTnI) 및 트로포닌 T(cTnT)입니다."],
+        ["[53회 2교시 27번] 간 색소배설기능을 검사하는 외인성 색소 성분은?", ["크레아티닌","인도사이아닌그린(ICG)","페놀설폰프탈레인(PSP)","p-아미노히푸르산(PAH)","요세관 재흡수 극량시험(TmG)"], 1, "ICG와 BSP는 간의 색소배설능을 평가하는 검사 시약입니다. (PSP, PAH, 크레아티닌은 신장기능검사)"],
+        ["[53회 2교시 28번] 실온에 방치한 소변에서 세균이 증식한 경우 나타나는 변화로 옳은 것은?", ["빌리루빈 증가","포도당 증가","케톤체 증가","아질산염 증가","우로빌리노겐 증가"], 3, "세균이 소변 내 질산염(nitrate)을 아질산염(nitrite)으로 환원시키므로 아질산염이 증가합니다."],
+        ["[53회 2교시 29번] 소변 시험지 검사 전, 검체를 충분히 혼합하지 않는 경우에 침전되어 위음성 오차가 발생할 수 있는 것은?", ["pH","적혈구(RBC)","포도당","빌리루빈","케톤체"], 1, "적혈구와 백혈구 같은 유형성분은 방치 시 바닥에 가라앉으므로 검사 전 잘 혼합해야 합니다."],
+        ["[53회 2교시 30번] 요단백검사에서 지시약의 단백오차 원리로 반응하는 시험지 성분은?", ["메틸레드","과산화효소","에를리히","다이아조늄","테트라브롬페놀블루(TBPB)"], 4, "요단백 시험지는 pH 3.0 완충제와 테트라브롬페놀블루(TBPB)를 이용해 알부민과 반응합니다."],
+        ["[53회 2교시 31번] 당뇨병신장병증(diabetic nephropathy)을 조기진단하기 위한 소변검사는?", ["담즙뇨","점액뇨","빌리루빈뇨","미세알부민뇨(microalbuminuria)","우로빌리노젠뇨"], 3, "일반 요단백 시험지로 검출되지 않는 초기 당뇨병성 신증 진단에는 미세알부민뇨 검사를 시행합니다."],
+        ["[53회 2교시 32번] 요 현미경검사에서 편광현미경 시 몰타십자(maltese cross) 형태의 지방체나 콜레스테롤 결정이 관찰되는 질환은?", ["방광염","요도염","요로결석증","신우신염","신증후군(nephrotic syndrome)"], 4, "심한 단백뇨와 고지혈증을 동반하는 신증후군에서는 소변에서 지방원주, 난원형지방체(몰타십자), 콜레스테롤 결정이 관찰됩니다."],
+        ["[53회 2교시 33번] 요검체를 실온에 방치할 때 검정색으로 변하며, 호모젠티스산 산화효소의 결핍으로 발생하는 선천성 대사질환은?", ["티로신뇨증","인디칸뇨증","알캅톤뇨증(alkaptonuria)","포르피린뇨증","갈락토오스뇨증"], 2, "알캅톤뇨증은 호모젠티스산 산화효소 결핍으로 소변이 알칼리화·산화될 때 흑갈색~검정색으로 변합니다."],
+        ["[53회 2교시 34번] 전립샘에서 일부 분비되며, 검체 채취 후 30~60분간 액화(liquefaction) 과정이 필요한 검체는?", ["정액(semen)","활액","양수","심장막액","뇌척수액"], 0, "정액은 채취 직후 응고되었다가 전립샘 특이항원(PSA) 등의 단백분해효소 작용으로 30~60분 내에 액화됩니다."],
+        ["[53회 2교시 35번] 베르고니-트리본도 법칙에 따라 방사선 피폭에 감수성이 가장 낮은 조직은?", ["근육","골수","림프조직","난포 형성조직","정자 형성조직"], 0, "세포분열이 활발하고 미분화된 조혈모세포(골수), 생식세포는 방사선 감수성이 높고, 분화가 끝난 근육·신경·뼈조직은 감수성이 낮습니다."],
+        ["[53회 2교시 36번] 감마선계측기(γ-counter)와 베타선계측기(β-counter)의 검출 단위는?", ["흡수선량(rad)","선량당량(rem)","조사선량(C/kg)","분당계측값(cpm)","초당붕괴값(dps)"], 3, "섬광계측기에서 방사선 검출기 효율을 반영해 분당 측정된 펄스 수는 cpm(counts per minute)입니다."],
+        ["[53회 2교시 37번] 체외 방사면역측정법에서 갑상샘호르몬 검사에 가장 널리 이용하는 방사성 동위원소는?", ["14C","3H","125I","32P","51Cr"], 2, "갑상샘 호르몬 등 대부분의 체외 RIA 검사에는 감마선을 방출하고 반감기가 약 60일인 요오드 동위원소(125I)를 가장 많이 사용합니다."],
+        ["[53회 2교시 38번] 방사성표지항원과 비표지 유리항원이 제한된 항체 결합부위를 두고 경쟁하는 측정법은?", ["효소면역측정법(EIA)","형광면역측정법(FIA)","방사면역측정법(RIA)","화학발광면역측정법(CLIA)","면역방사계수측정법(IRMA)"], 2, "표지항원을 이용한 경쟁적 결합 반응은 방사면역측정법(RIA)이며, 표지항체를 이용한 비경쟁 샌드위치법은 IRMA입니다."],
+        ["[50회 3교시 18번] 요시험지봉을 이용한 요화학 자동분석기의 광학적 측정 방법은?", ["형광광도법","산란광분석법","이온선택전극법","효소면역측정법","반사율광도측정법"], 4, "요시험지봉의 색상 변화 강도는 반사율광도측정법(Reflectance photometry)으로 측정합니다."],
+        ["[50회 3교시 20번] sodium fluoride (NaF)가 첨가된 회색 마개 시험관으로 측정하는 혈액 검사 항목은?", ["HLA","urea","lactate","ammonia","blood gas"], 2, "NaF(해당억제제) 시험관은 혈당(glucose)과 젖산(lactate) 측정에 사용됩니다."],
+        ["[50회 3교시 22번] 소변 및 혈청에서 Bence-Jones protein(단클론성 유리경쇄)을 확인하기 위해 전기영동 검사를 시행하였다. 관련된 질환은?", ["간경화증","급성염증","다발골수종","심근경색증","콩팥증후군"], 2, "형질세포 종양인 다발골수종(Multiple myeloma)에서는 M-단백과 소변 벤스-존스 단백이 검출됩니다."],
+        ["[50회 3교시 23번] 검체의 효소 활성(AST, ALT, LD 등)을 자외선부 연속측정법으로 측정할 때 이용하는 보조효소와 흡수파장은?", ["NAD, 200 nm","NAD, 340 nm","NADH, 200 nm","NADH, 340 nm","NADH, 400 nm"], 3, "환원형 조효소인 NADH(또는 NADPH)가 340 nm에서 최대 흡광도를 보이는 성질을 이용합니다."],
+        ["[50회 3교시 28번] 현장검사(POCT)에 대한 설명으로 옳은 것은?", ["검사 과정이 복잡하다.","분석기 이동이 어렵다.","주로 혈청을 사용한다.","검사실에서만 사용한다.","빠른 결과를 얻을 수 있다."], 4, "POCT는 환자 곁에서 전혈 등을 이용해 원심분리 없이 신속하게 결과를 얻는 검사입니다."],
+        ["[50회 3교시 29번] 뇌척수액(CSF)을 3~4개의 시험관에 순차적으로 채취하는 과정에 대한 설명으로 옳은 것은?", ["성인의 요추천자이다.","두 번째 시험관은 세포계산에 사용된다.","미생물 검사용 검체는 배양 전에 냉장 보관한다.","화학 검사 검체를 장기 보관할 때는 실온에 보관한다.","첫 번째 시험관은 화학 및 혈청학 검사용으로 사용한다."], 4, "천자 시 혈액 혼입 가능성이 있는 1번 시험관은 화학·혈청학 검사, 2번은 미생물 검사, 혈액 오염이 가장 적은 3번 시험관은 세포 수 산정(세포계산)에 사용합니다."],
+        ["[50회 3교시 32번] 납으로 만든 방사성 동위원소 저장 용기는 외부피폭 방호 3원칙 중 무엇에 해당하는가?", ["거리","시간","섭취","흡입","차폐"], 4, "외부피폭 방호 3원칙(시간 단축, 거리 확보, 차폐) 중 납 용기는 차폐(shielding)에 해당합니다."],
+        ["[51회 3교시 18번] 소변 침사물 중 원주(cast)의 주된 기질 단백질은?", ["알부민","점액다당류","지질단백질","면역글로불린","탐-호스팔 단백질"], 4, "헨레고리 굵은오름다리 세뇨관 상피에서 분비되는 탐-호스팔 당단백질(Tamm-Horsfall protein, uromodulin)이 원주의 기질입니다."]
+    ]),
+
+    // 10. 수혈의학 (53회 2교시 62~73번 + 50·51회 3교시 실기 = 18문항)
+    transfusion: buildQuestions([
+        ["혈액형 항원 중 주로 IgG의 생산을 유도하는 온난항체성 항원은?", ["A","B","D","I","H"], 2, "ABO식 항원(A, B, H)과 I 항원은 주로 IgM을 유도하고, Rh식 항원(D 등)은 주로 면역항체인 IgG를 유도합니다."],
+        ["혈액백 스티커에 혈액형을 표시하는 글자 색으로 옳은 것은?", ["O형 농축적혈구-청색","A형 농축적혈구-검정색","B형 농축적혈구-청색","O형 농축혈소판-황색","AB형 농축혈소판-적색"], 1, "혈액형 표시 색상은 A형-검정색, B형-적색, O형-청색, AB형-황색입니다. (단, 53회 국시원 최종답안은 5번으로 발표됨)"],
+        ["ABO 혈액형 검사 시 혈구형 검사에서 항-A 혈청에 응집되고 항-B 혈청에 비응집되었다. 옳은 설명은?", ["ABO 혈액형 불일치","적혈구에 A 항원이 존재","적혈구에 B 항원이 존재","혈청에 항-A 항체가 존재","적혈구에 A 항원, B 항원이 모두 존재"], 1, "항-A 혈청과 반응하여 응집되었으므로 적혈구 표면에 A 항원이 존재하는 A형입니다."],
+        ["발작성 한랭혈색소뇨증(PCH)의 원인이 되는 도나스-랜드스타이너(Donath-Landsteiner) 이상성 용혈 항체의 특이성은?", ["Anti-Fya","Anti-Lea","Anti-Lua","Anti-M","Anti-P"], 4, "도나스-랜드스타이너 항체는 저온에서 적혈구의 P 항원에 결합한 뒤 체온(37℃)에서 보체를 활성화해 용혈을 일으키는 IgG 항-P(Anti-P) 자가항체입니다."],
+        ["수혈용 혈액에 대한 혈액선별검사 항목 중 간기능 검사(ALT)의 부적격 판정 기준은?", ["50 IU/L 이상","71 IU/L 이하","80 IU/L 이하","90 IU/L 이상","101 IU/L 이상"], 4, "혈액관리법상 수혈용 혈액의 ALT 부적격 기준은 101 IU/L 이상입니다."],
+        ["전혈 400 mL 채혈백에 들어 있는 CPDA-1 항응고보존제의 양은?", ["40 mL","44 mL","50 mL","56 mL","60 mL"], 3, "CPDA-1과 전혈의 비율은 1.4 : 10이므로, 400mL 채혈백에는 56 mL(320mL 백에는 44.8mL)의 항응고제가 들어 있습니다."],
+        ["수혈 관련 이식편대숙주병(TA-GVHD) 예방을 위한 혈액제제는?", ["전혈","농축적혈구","세척적혈구","동결침전제제","방사선조사농축적혈구"], 4, "공혈자의 T림프구 증식을 억제하여 이식편대숙주병(GVHD)을 예방하기 위해서는 감마선(25~30 Gy)을 조사한 방사선조사 혈액제제를 사용합니다."],
+        ["원주응집법(column agglutination technique)을 이용한 교차적합시험에 대한 설명으로 옳은 것은?", ["자동화검사에 부적합하다.","편리하지만 검체가 많이 필요하다.","한랭항체의 검출에 제한점이 있다.","최신 검사법으로 미숙련자는 판독이 어렵다.","칼럼의 재활용이 용이하여 비용 절감 효과가 있다."], 2, "원주응집법(Gel card)은 주로 37℃ 반응 및 항글로불린 단계 위주로 설계되어 실온 반응성 한랭항체(IgM) 검출에는 다소 제한이 있을 수 있으나 민감도와 재현성이 높고 자동화가 용이합니다."],
+        ["주교차시험(major cross matching)의 구성으로 옳은 것은?", ["공혈자 혈구+공혈자 혈청","공혈자 혈구+수혈자 혈청","수혈자 혈구+공혈자 혈구","수혈자 혈구+공혈자 혈청","수혈자 혈구+수혈자 혈청"], 1, "주교차시험은 공혈자(헌혈자)의 적혈구와 수혈자(환자)의 혈청을 반응시키는 검사입니다."],
+        ["교차시험(cross matching)의 실온식염수법 단계에서 응집이 일어난 경우 가장 먼저 확인해야 할 해결 방법은?", ["온난항체 동정","간접항글로불린 검사","직접항글로불린 검사","ABO 혈액형 재확인","IgG 비예기항체 검사"], 3, "실온식염수법에서 즉각적인 강한 응집이 나타나면 ABO 불일치 가능성이 가장 크므로 환자와 헌혈자의 ABO 혈액형을 재확인해야 합니다."],
+        ["직접항글로불린 검사가 양성이고 원인이 적혈구에 감작된 한랭 자가항체(IgM)나 보체로 예상될 때 혹은 따뜻한 식염수로 항체를 떼어내는 용출법은?", ["가열법","에테르법","클로로퀸법","식염수치환법","폴리에틸렌글리콜법"], 0, "ABO 신생아용혈성질환이나 IgM 항체 용출에는 56℃ 가열법(heat elution)을 사용합니다. (단, 53회 국시원 최종답안은 1번 가열법)"],
+        ["신선동결혈장(FFP)과 동결침전제제(Cryoprecipitate)의 보존온도는?", ["1~6℃","-4~0℃","-10~-6℃","-18℃ 이하","20~25℃"], 3, "신선동결혈장과 동결침전제제는 -18℃ 이하에서 냉동 보존합니다(최종답안 1번 표기 문항은 원문 선지 배열상 ① -18℃ 이하)."],
+        ["정확한 비예기항체 동정을 위해 파파인·피신 등 단백분해효소(enzyme)로 처리된 적혈구 시약으로 검사하였다. 반응이 증강되는 항체는?", ["Anti-E","Anti-M","Anti-N","Anti-S","Anti-Fya"], 0, "효소 처리 시 Rh계(D, C, E, c, e), Kidd, Lewis, P 항체는 반응이 증강되고, M, N, S, Fya, Fyb 항원은 파괴되어 반응이 소실됩니다."],
+        ["신선동결혈장(FFP)의 보관기준은?", ["20~24℃ 실온에서 120시간 보관","1~6℃ 혈액보관냉장고에서 35일 보관","1~6℃ 혈액보관냉장고에서 1년 보관","-18℃ 이하 혈액보관냉동고에서 1년 보관","-18℃ 이하 혈액보관냉동고에서 2년 보관"], 3, "신선동결혈장은 -18℃ 이하에서 채혈일로부터 1년간 보존합니다."],
+        ["빈혈 환자가 백혈구여과제거적혈구 수혈 후 혈장 단백질에 대한 두드러기, 아나필락시스 반응을 보였다. 다음 수혈 시 예방을 위한 제제는?", ["전혈","농축백혈구","농축적혈구","농축혈소판","세척적혈구"], 4, "IgA 결핍 환자 등에서 혈장 단백질에 의한 심한 알레르기·아나필락시스 수혈부작용을 예방하기 위해 생리식염수로 혈장을 제거한 세척적혈구(Washed RBC)를 수혈합니다."]
+    ]),
+
+    // 11. 임상미생물학 (53회 2교시 74~115번 + 50·51회 3교시 실기 = 52문항)
+    microbiology: buildQuestions([
+        ["열에 약한 플라스틱 제품(페트리디시, 일회용 주사기)의 멸균방법은?", ["여과멸균","응고멸균","화염멸균","Ethylene oxide 가스멸균","가압증기멸균"], 3, "열에 약한 플라스틱 의료기구는 EO(Ethylene oxide) 가스멸균을 사용합니다."],
+        ["평판배지에 검체를 4구역 획선도말법(streak plate method)으로 접종하는 이유는?", ["협막 관찰","독소 생성능 관찰","충분한 산소 공급","독립된 집락 생성","세균의 운동성 관찰"], 3, "단일 세균으로부터 순수 분리된 독립 집락(single colony)을 얻기 위함입니다."],
+        ["Staphylococcus aureus(황색포도알균)의 성상으로 옳은 것은?", ["그람양성막대균","mannitol 비분해","DNase 시험 양성","catalase 시험 음성","coagulase 시험 음성"], 2, "S. aureus는 그람양성알균으로 catalase 양성, coagulase 양성, 만니톨 발효 양성, DNase 양성입니다."],
+        ["Streptococcus agalactiae(B군 사슬알균)의 생화학적 성상으로 옳은 것은?", ["PYR 시험 양성","CAMP 시험 양성","catalase 시험 양성","담즙용해 시험 양성","bile esculin 시험 양성"], 1, "S. agalactiae는 CAMP 시험 양성과 마뇨산염(hippurate) 가수분해 양성으로 동정합니다."],
+        ["장알균(Enterococcus)과 D군 사슬알균(Streptococcus bovis 등)을 감별하는 시험은?", ["협막팽화시험","optochin 시험","bacitracin 시험","6.5% 식염내성 시험","마뇨산염 가수분해 시험"], 3, "둘 다 담즙에스쿨린 양성이지만, 장알균(Enterococcus)은 6.5% NaCl 배지에서 증식(양성)하고 D군 사슬알균은 증식하지 못합니다."],
+        ["비뇨생식기계 검체 배양 결과 [그람음성 세포내쌍알균, MTM 선택배지 증식, Oxidase 양성, CTA 배지에서 glucose만 분해]로 예상되는 세균은?", ["Neisseria lactamica","Moraxella catarrhalis","Neisseria meningitidis","Neisseria gonorrhoeae","Acinetobacter baumannii"], 3, "임균(Neisseria gonorrhoeae)은 MTM 배지에서 자라며 포도당(glucose)만 분해합니다. (수막염균은 포도당과 맥아당 분해)"],
+        ["[좁은 β-용혈, CAMP 시험 양성, Bile esculin 양성, SIM 배지에서 25℃ 우산모양 운동성 양성·37℃ 음성] 성상을 보이는 그람양성 짧은막대균은?", ["Bacillus anthracis","Enterococcus faecalis","Listeria monocytogenes","Erysipelothrix rhusiopathiae","Corynebacterium diphtheriae"], 2, "리스테리아 모노사이토게네스(Listeria monocytogenes)의 특징입니다."],
+        ["항산성 염색(Ziehl-Neelsen)에서 균삭형성(cord factor)이 보이는 세균은?", ["Escherichia coli","Proteus mirabilis","Haemophilus influenzae","Mycoplasma pneumoniae","Mycobacterium tuberculosis"], 4, "결핵균(M. tuberculosis)은 코드 인자(trehalose dimycolate)에 의해 뱀 모양의 균삭(cord)을 형성합니다."],
+        ["장내세균 중 TSI배지에서 K/A(사면은 적색, 고층은 황색)로 해석되는 결과는?", ["젖당 분해","설탕 분해","엿당 분해","과당 분해","포도당(glucose)만 분해"], 4, "포도당만 발효하고 유당(젖당)과 자당(설탕)을 비발효하면 사면은 알칼리(K, 적색), 고층은 산성(A, 황색)이 됩니다."],
+        ["SS 배지에서 무색 집락(유당 비발효)과 중심부 흑색의 황화수소(H2S)를 생성하는 세균은?", ["Escherichia coli","Salmonella Typhi","Shigella dysenteriae","Serratia marcescens","Klebsiella pneumoniae"], 1, "살모넬라(Salmonella Typhi)는 SS 배지에서 유당 비발효 무색 집락에 H2S 생성으로 중심부가 검은 집락을 형성합니다."],
+        ["Lactose 비분해균과 서서히 분해하는 지연발효균 감별에 이용하는 검사법은?", ["indole 시험","ONPG 시험","oxidase 시험","catalase 시험","phenylalanine deaminase 시험"], 1, "유당 투과효소 결핍으로 유당을 늦게 발효하는 균은 ONPG 시험을 통해 β-galactosidase 유무를 신속히 확인합니다."],
+        ["Serratia marcescens가 실온 배양 시 생성하는 적색 색소는?", ["melanin","pyorubin","pyocyanin","prodigiosin","fluorescein"], 3, "Serratia marcescens는 적색 색소인 프로디지오신(prodigiosin)을 생성합니다."],
+        ["BAP 배지에서 유주현상(swarming)을 보이며, urease 양성, PAD 양성, indole 양성인 그람음성막대균은?", ["Yersinia pestis","Escherichia coli","Proteus vulgaris","Shigella dysenteriae","Klebsiella pneumoniae"], 2, "Proteus 속은 유주현상, urease 강양성, PAD 양성이고, 그중 P. vulgaris는 indole 양성(P. mirabilis는 indole 음성)입니다."],
+        ["Vibrio vulnificus의 특성으로 옳은 것은?", ["ONPG 시험 양성","oxidase 시험 음성","0% NaCl에서 발육","Kanagawa 현상 양성","TCBS 배지에서 황색집락 형성"], 0, "비브리오 패혈증균(V. vulnificus)은 유당을 발효하며 ONPG 양성이고 TCBS에서 청록색 집락을 형성합니다."],
+        ["Pseudomonas aeruginosa(녹농균)의 특성으로 옳은 것은?", ["주모성 편모","glucose 발효","조건무산소성","청록색 색소(pyocyanin) 생성","oxidase 시험 음성"], 3, "녹농균은 포도당 비발효 산소성 그람음성막대균으로 oxidase 양성이며 피오시아닌(청록색 색소)과 포도향 냄새를 냅니다."],
+        ["Acinetobacter baumannii의 특성으로 옳은 것은?", ["운동성 양성","그람양성알균","glucose 발효","TSI배지: A/AG","oxidase 시험 음성"], 4, "Acinetobacter 속은 포도당 비발효 그람음성 구형막대균으로 비운동성이며 oxidase 음성, catalase 양성입니다."],
+        ["X인자(hemin) 요구균으로, porphyrin 시험 음성인 무른궤양(연성하감)의 원인균은?", ["Haemophilus ducreyi","Haemophilus influenzae","Haemophilus aphrophilus","Haemophilus haemolyticus","Haemophilus parainfluenzae"], 0, "연성하감의 원인균인 H. ducreyi는 X인자만 요구합니다."],
+        ["재향군인병(레지오넬라 폐렴)의 원인균인 Legionella pneumophila의 특성으로 옳은 것은?", ["무산소성","아포형성","그람양성알균","백일해를 일으킴","소변검체에서 신속항원검사 가능"], 4, "BCYE 배지에서 증식하며 환자의 소변 검체를 이용한 신속항원검사로 진단합니다."],
+        ["파상풍의 원인균인 Clostridium tetani의 특성으로 옳은 것은?", ["산소성","항산성균","북채모양(라켓모양)의 말단 아포형성","축사체에 의한 운동성","소아의 거짓막대장염 유발"], 2, "C. tetani는 편성 무산소성 그람양성막대균으로 균체 끝에 둥근 말단 아포를 형성해 북채(drumstick) 모양을 띱니다."],
+        ["Campylobacter jejuni의 특성으로 옳은 것은?", ["산소성","운동성 음성","42℃에서 비증식","oxidase 시험 음성","마뇨산염(hippurate) 가수분해 시험 양성"], 4, "C. jejuni는 미호기성, 42℃ 증식 양성이며 다른 캄필로박터 종과 구별되는 특징으로 마뇨산염 가수분해 시험 양성입니다."],
+        ["위궤양 원인균인 Helicobacter pylori의 특성으로 옳은 것은?", ["호염균","무산소성","비운동성","CLO(요소분해효소) 시험 양성","oxidase 시험 음성"], 3, "강력한 요소분해효소(urease)를 생성하므로 위 생검조직을 이용한 신속요소분해효소 시험(CLO test)에 양성입니다."],
+        ["결핵균 진단법인 중합효소사슬반응(PCR)에 사용되는 요소 중 열에 안정적이고 DNA 합성에 관여하는 효소는?", ["KOH","MgCl2","DNA ligase","Phosphate buffer","Taq DNA polymerase"], 4, "호열성 세균에서 분리한 내열성 중합효소인 Taq DNA polymerase입니다."],
+        ["[어루러기(전풍)의 원인균, 병모양 분아형 효모, 호지성으로 Olive oil 첨가 배지에서 증식] 설명으로 예상되는 진균은?", ["Malassezia furfur","Microsporum canis","Trichophyton rubrum","Trichosporon cutaneum","Epidermophyton floccosum"], 0, "어루러기의 원인균인 Malassezia furfur는 지질 요구성(호지성) 진균으로 배지에 올리브유를 첨가해 배양합니다."],
+        ["대분생자는 곤봉형(비버 꼬리 모양)이고, 소분생자가 전혀 관찰되지 않는 피부사상균은?", ["Candida 속","Aspergillus 속","Penicillium 속","Cryptococcus 속","Epidermophyton 속"], 4, "피부사상균 3속 중 Epidermophyton floccosum은 소분생자가 없고 2~4개의 격막을 가진 곤봉형 대분생자만 형성합니다."],
+        ["사상균(진균) 세포벽의 주요 구성 다당류 성분은?", ["키틴(chitin)","테이코산","콜레스테롤","펩티도글리칸","지다당류(LPS)"], 0, "진균 세포벽은 키틴(chitin), 글루칸, 만난 등으로 구성됩니다."],
+        ["바이러스 입자(비리온)의 가장 기본적인 구조는?", ["핵산과 지질","핵산과 캡시드","탄수화물과 지질","탄수화물과 핵산","탄수화물과 캡시드"], 1, "바이러스의 기본 구조는 중심부의 핵산(DNA 또는 RNA)과 이를 둘러싼 단백질 껍질인 캡시드(capsid)로 구성된 뉴클레오캡시드입니다."],
+        ["소아에게 수두를 유발하고 면역력이 저하된 성인에게는 대상포진을 일으키는 바이러스는?", ["Adenovirus","Rubella virus","Cytomegalovirus","Epstein-Barr virus","Varicella zoster virus"], 4, "수두-대상포진 바이러스(VZV, HHV-3)입니다."],
+        ["모기 매개 바이러스 질환은?", ["홍역","풍진","일본뇌염","인플루엔자","후천면역결핍증후군"], 2, "일본뇌염 바이러스는 작은빨간집모기가 매개하는 플라비바이러스입니다."],
+        ["4개의 전편모와 파동막이 있고 영양형만 존재하며 성접촉으로 감염되는 편모충류는?", ["질편모충","구강편모충","메닐편모충","맹장편모충","장세모편모충"], 0, "질편모충(Trichomonas vaginalis)은 포낭형 없이 영양형만 존재하며 성접촉으로 전파됩니다."],
+        ["충란은 한쪽이 편평한 감씨 모양이고 어린이 항문 주위에 산란하며 스카치테이프법(도장법)으로 검출하는 기생충은?", ["요충","사상충","간흡충","무구조충","동양모양선충"], 0, "요충(Enterobius vermicularis)은 야간에 항문 주위 피부에 산란하므로 아침에 셀로판테이프법으로 검출합니다."],
+        ["바다 생선류(오징어, 고등어 등)를 회로 먹은 사람에게 급성복통을 유발하고, 위내시경으로 유충을 확인·제거하는 기생충은?", ["폐흡충","고래회충","말라리아","이질아메바","말레이사상충"], 1, "해산 어류를 날것으로 섭취했을 때 위벽을 뚫고 들어가 급성 위경련을 일으키는 기생충은 고래회충(Anisakis) 유충입니다."],
+        ["치료 목적으로 환자에게 회복기 환자의 혈청(항체)이나 면역글로불린을 주사하는 경우에 획득할 수 있는 면역은?", ["인공 능동 면역","자연 능동 면역","인공 수동 면역","자연 수동 면역","인공 선천 면역"], 2, "외부에서 만들어진 항체(면역혈청)를 인위적으로 주사해 즉각적인 방어력을 얻는 것은 인공 수동 면역입니다. (백신 접종은 인공 능동 면역)"],
+        ["[에피토프 보유, 항체 생산이나 세포성 면역 유도, 비자기(non-self)로 인식, 저분자여서 단독으로 항체를 못 만들면 합텐(hapten)이라 함]에서 설명하는 것은?", ["보체","항원","항체","운반체","가교제"], 1, "면역반응을 유도하는 물질인 항원(Antigen)에 대한 설명입니다."],
+        ["고전보체경로(classical pathway)에서 C1 이후 활성화 순서로 옳은 것은?", ["C2→C3→C4→C5","C3→C4→C5→C2","C4→C2→C3→C5","C4→C3→C2→C5","C4→C5→C2→C3"], 2, "고전경로의 보체 활성화 순서는 C1 → C4 → C2 → C3 → C5 → C6 → C7 → C8 → C9입니다."],
+        ["[6번 염색체에 유전자 존재, 세포독성 T림프구(CD8+)에 항원 제시, 거의 모든 유핵세포와 혈소판 표면에서 발현]하는 주조직적합복합체는?", ["MHC Class I","MHC Class II","MHC Class III","제1형 과민반응","제2형 과민반응"], 0, "모든 유핵세포에 존재하며 CD8+ 세포독성 T세포에 내인성 항원을 제시하는 분자는 MHC Class I(HLA-A, B, C)입니다."],
+        ["제4형 지연형 과민반응(세포매개성 면역)의 기전을 이용하여 투베르쿨린 피부반응으로 진단하는 질환은?", ["결핵","성홍열","장티푸스","디프테리아","일차비정형폐렴"], 0, "결핵의 투베르쿨린(PPD) 피부반응검사는 T림프구와 대식세포가 관여하는 제4형 지연형 과민반응의 대표적 예입니다."],
+        ["HEp-2 세포의 핵 염색패턴을 판정하는 항핵항체(ANA) 선별검사의 표준 원리는?", ["중합효소사슬반응(PCR)","노던 블롯","서던 블롯","간접형광항체법(IFA)","등온중합효소사슬반응(LAMP)"], 3, "HEp-2 기질세포 슬라이드에 환자 혈청과 형광 표지 항인간글로불린을 반응시켜 형광현미경으로 관찰하는 간접면역형광법(IFA, FANA)입니다."],
+        ["탄소(carbon) 입자를 흡착한 카디오리핀 지질항원에 매독 환자의 혈청을 가하여 검은 응집 덩어리를 육안으로 관찰할 수 있는 비특이적 매독 검사는?", ["RPR","VDRL","TPPA","TPHA","FTA-ABS"], 0, "탄소 입자를 결합시켜 현미경 없이 육안으로 응집을 판독하는 매독 선별검사는 RPR(신속혈장레아긴검사)입니다."],
+        ["B형 간염의 혈청학적 표지자 중 예방 접종 후 중화항체 형성 효과를 확인할 때 사용하는 지표는?", ["HBs Ag","HBc Ag","HBe Ag","Anti-HBe","Anti-HBs"], 4, "B형간염 표면항체(Anti-HBs)가 양성이면 예방접종에 의해 방어면역이 형성되었거나 과거 감염 후 회복되었음을 의미합니다."],
+        ["혈중 p24 캡시드 항원의 효소면역측정법으로 항체 형성 전 창문기(window period)를 단축하여 조기 진단할 수 있는 바이러스는?", ["CMV","HAV","HBV","HCV","HIV"], 4, "인체면역결핍바이러스(HIV) 감염 초기에는 p24 항원-항체 동시검사(4세대 EIA)를 통해 조기 진단합니다."],
+        ["환자의 혈청에서 류마티스인자(RF)와 함께 특이도가 높은 항CCP항체(anti-cyclic citrullinated peptide antibody)가 검출되었을 때 예상되는 자가면역질환은?", ["매독","장티푸스","감염단핵구증","류마티스관절염","일차비정형폐렴"], 3, "Anti-CCP 항체는 류마티스관절염(Rheumatoid arthritis) 진단에 특이도가 가장 높은 자가항체입니다."],
+        ["장기이식을 위해 공여자와 수혜자의 HLA 유전자형(genotype)을 분자유전학적으로 확인하기 위한 검사는?", ["동종항체검사","중합효소사슬반응검사(PCR)","교차시험검사","패널반응항체검사(PRA)","보체의존세포독성검사(CDC)"], 1, "HLA 유전자형(DNA typing)은 PCR(PCR-SSP, PCR-SSOP, SBT 등) 기법으로 검사합니다."],
+        ["가압(고압)증기멸균기의 생물학적 정도관리(성능 검증)에 사용하는 내열성 아포 형성 지표 균주는?", ["Nocardia asteroides","Listeria monocytogenes","Erysipelothrix rhusiopathiae","Corynebacterium diphtheriae","Geobacillus stearothermophilus"], 4, "고압증기멸균기의 생물학적 표지자에는 Geobacillus(Bacillus) stearothermophilus 아포를 사용합니다. (EO 가스는 B. atrophaeus)"],
+        ["사상균(진균)의 균사와 포자 구조 관찰이 용이하고 영구보존용 표본 제작에 사용하는 염색법은?", ["그람 염색","항산성 염색","식염수 현적 표본법","KOH 표본법","lactophenol cotton blue(LPCB) 염색표본법"], 4, "사상균의 형태 관찰에는 락토페놀 코튼블루(LPCB) 염색법을 사용합니다."],
+        ["장미가시에 긁혀 생긴 상처에서 분리되었으며, 25℃에서는 꽃모양 분생자 사상형, 37℃에서는 시가모양(cigar body) 효모형인 두형태 진균은?", ["Aspergillus niger","Sporothrix schenckii","Penicillium marneffei","Microsporum gypseum","Trichophyton mentagrophytes"], 1, "장미가시병(피하진균증)을 일으키는 두형태 진균은 스포로트릭스 셴키(Sporothrix schenckii)입니다."],
+        ["세균을 숙주로 하여 감염시키는 바이러스는?", ["Rotavirus","Adenovirus","Bacteriophage","Herpes simplex virus","Human papilloma virus"], 2, "세균을 숙주로 삼는 바이러스는 박테리오파지(Bacteriophage)입니다."],
+        ["코로나19 진단을 위한 실시간 역전사 중합효소연쇄반응법(real-time RT-PCR)으로 옳은 것은?", ["별도의 전기영동이 필요하다.","형광물질을 이용한 검사이다.","확진을 위해 세포배양이 필요하다.","rapid test보다 민감도가 낮다.","PCR 사이클마다 증폭정도를 확인하기 어렵다."], 1, "Real-time PCR은 형광 표지자(TaqMan probe나 SYBR Green)를 이용해 증폭 과정을 실시간으로 측정하며 별도의 전기영동이 필요 없습니다."],
+        ["HLA 검사에서 Ficoll-Hypaque 밀도구배 원심분리법을 거쳐 최종적으로 분리해 얻으려고 하는 단핵세포는?", ["적혈구","호중구","호산구","림프구","호염기구"], 3, "비중 1.077의 Ficoll-Hypaque 용액으로 원심분리하면 중간 백색층에서 순수한 림프구(및 단핵구)를 분리할 수 있습니다."],
+        ["겨울철에 영유아 가성콜레라(급성 설사·장염)를 일으키는 수레바퀴 모양의 외피 비보유 이중가닥 RNA 바이러스는?", ["rotavirus","adenovirus","papillomavirus","smallpox virus","herpes simplex virus"], 0, "영유아 추계·동계 설사의 가장 흔한 원인 바이러스는 로타바이러스(Rotavirus)입니다."],
+        ["급성호흡기질환, 유행성 각결막염 등을 일으키는 정이십면체 외피 비보유 DNA 바이러스는?", ["norovirus","enterovirus","adenovirus","rubella virus","influenza virus"], 2, "아데노바이러스(Adenovirus)는 외피 비보유 이중가닥 DNA 바이러스로 인두결막열과 유행성 각결막염을 일으킵니다."],
+        ["제1중간숙주 다슬기, 제2중간숙주 민물참게와 가재이며 객담이나 대변에서 검출되는 난원형(최대폭이 앞쪽에 치우침) 충란은?", ["요충","편충","회충","폐흡충","무구조충"], 3, "폐흡충(Paragonimus westermani)은 다슬기와 게·가재를 중간숙주로 하며 폐에 기생하여 객담과 대변으로 충란이 배출됩니다."]
+    ])
+};
+
+/* =========================================================================
+   학습 데이터 및 상태 관리
+========================================================================= */
+function createDefaultStudyData() {
+    const subjectsObj = {};
+    SUBJECTS.forEach(s => {
+        subjectsObj[s.key] = { solved: 0, correct: 0 };
+    });
+    return {
+        solved: 0,
+        correct: 0,
+        wrongQuestions: [],
+        subjects: subjectsObj,
+        dailySolved: 0,
+        dailyDate: ""
+    };
+}
+
+let studyData = JSON.parse(localStorage.getItem("labQStudyData")) || createDefaultStudyData();
+if (!studyData.subjects) studyData.subjects = {};
+SUBJECTS.forEach(s => {
+    if (!studyData.subjects[s.key]) {
+        studyData.subjects[s.key] = { solved: 0, correct: 0 };
+    }
+});
+
+let currentSubject = "hematology";
+let currentMode = "basic";
+let quizQuestions = [];
+let currentQuestion = 0;
+let score = 0;
+let answered = false;
+let wrongFilter = "all";
+
+/* =========================================================================
+   UI 동적 렌더링 초기화 (과목 카드, 오답 탭, MY 페이지)
+========================================================================= */
+function initDynamicUI() {
+    // 1. 홈 화면 과목 카드 생성
+    const subjectListEl = document.getElementById("subjectList");
+    subjectListEl.innerHTML = SUBJECTS.map(s => {
+        const count = QUESTION_BANK[s.key].length;
+        return `
+            <button class="subject-card" data-name="${s.name} ${s.desc}" onclick="selectSubject('${s.key}')">
+                <div class="subject-header">
+                    <div class="subject-icon">${s.icon}</div>
+                    <div>
+                        <div class="subject-name">${s.name}</div>
+                        <div class="subject-desc">${s.desc} · ${count}문제</div>
+                    </div>
+                </div>
+                <div class="progress-info">
+                    <span>학습 진행률</span>
+                    <span id="${s.key}ProgressText">0%</span>
+                </div>
+                <div class="progress">
+                    <div id="${s.key}Progress" class="progress-fill"></div>
+                </div>
+            </button>
+        `;
+    }).join("");
+
+    // 2. 오답노트 과목 필터 탭 생성
+    const wrongTabsEl = document.getElementById("wrongTabs");
+    let tabsHtml = `<button id="wrongTab_all" class="wrong-tab active" onclick="setWrongFilter('all')">전체</button>`;
+    tabsHtml += SUBJECTS.map(s => `
+        <button id="wrongTab_${s.key}" class="wrong-tab" onclick="setWrongFilter('${s.key}')">
+            ${s.icon} ${s.name}
+        </button>
+    `).join("");
+    wrongTabsEl.innerHTML = tabsHtml;
+
+    // 3. MY 페이지 과목별 기록 카드 생성
+    const mySectionEl = document.getElementById("mySubjectSection");
+    mySectionEl.innerHTML = SUBJECTS.map(s => {
+        const count = QUESTION_BANK[s.key].length;
+        return `
+            <div class="my-subject">
+                <div class="my-subject-top">
+                    <span>${s.icon} ${s.name}</span>
+                    <span id="myAccuracy_${s.key}">0%</span>
+                </div>
+                <div class="progress">
+                    <div id="myProgress_${s.key}" class="progress-fill"></div>
+                </div>
+                <div id="myText_${s.key}" style="font-size:11px;color:#9297a2;margin-top:8px;">
+                    0 / ${count} 문제
+                </div>
+            </div>
+        `;
+    }).join("");
+}
+
+function getSubjectLabel(key) {
+    const found = SUBJECTS.find(s => s.key === key);
+    return found ? `${found.icon} ${found.name}` : "과목";
+}
+
+function getSubjectQuestions(subject) {
+    return QUESTION_BANK[subject] || [];
+}
+
+function getAllQuestions() {
+    let all = [];
+    SUBJECTS.forEach(s => {
+        const list = getSubjectQuestions(s.key).map(q => ({ ...q, subject: s.key }));
+        all = all.concat(list);
+    });
+    return all;
+}
+
+/* =========================================================================
+   화면 이동 및 퀴즈 로직
+========================================================================= */
+function hideAllScreens() {
+    document.querySelectorAll(".screen").forEach(screen => screen.classList.remove("active"));
+}
+
+function goHome() {
+    hideAllScreens();
+    document.getElementById("homeScreen").classList.add("active");
+    updateHome();
+}
+
+function selectSubject(subject) {
+    currentSubject = subject;
+    document.getElementById("modeSubjectTitle").textContent = getSubjectLabel(subject);
+    hideAllScreens();
+    document.getElementById("modeScreen").classList.add("active");
+}
+
+function startDailyQuiz() {
+    const allQuestions = getAllQuestions();
+    quizQuestions = shuffleArray(allQuestions).slice(0, 5);
+    currentQuestion = 0;
+    score = 0;
+    currentMode = "daily";
+    currentSubject = "all";
+    showQuiz();
+}
+
+function startQuiz(mode) {
+    currentMode = mode;
+    let questions = getSubjectQuestions(currentSubject);
+
+    if (mode === "wrong") {
+        const wrong = studyData.wrongQuestions.filter(item => item.subject === currentSubject);
+        if (wrong.length === 0) {
+            alert("아직 이 과목의 오답 문제가 없어요!");
+            return;
+        }
+        questions = wrong.map(item => item.question);
+    }
+
+    if (mode === "random") {
+        questions = shuffleArray(questions);
+    }
+
+    quizQuestions = [...questions];
+    currentQuestion = 0;
+    score = 0;
+    showQuiz();
+}
+
+function shuffleArray(array) {
+    const copied = [...array];
+    for (let i = copied.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copied[i], copied[j]] = [copied[j], copied[i]];
+    }
+    return copied;
+}
+
+function showQuiz() {
+    hideAllScreens();
+    document.getElementById("quizScreen").classList.add("active");
+    showQuestion();
+}
+
+function showQuestion() {
+    answered = false;
+    const question = quizQuestions[currentQuestion];
+    const total = quizQuestions.length;
+
+    document.getElementById("questionNumber").textContent = `${currentQuestion + 1} / ${total}`;
+    const subjectKey = (currentMode === "daily") ? question.subject : currentSubject;
+    document.getElementById("quizSubject").textContent = getSubjectLabel(subjectKey);
+    document.getElementById("questionText").textContent = question.question;
+
+    const progress = (currentQuestion / total) * 100;
+    document.getElementById("quizProgressFill").style.width = progress + "%";
+
+    const options = document.getElementById("options");
+    options.innerHTML = "";
+
+    question.options.forEach((optionText, index) => {
+        const button = document.createElement("button");
+        button.className = "option";
+        button.textContent = `${index + 1}. ${optionText}`;
+        button.onclick = function() {
+            checkAnswer(index, button);
+        };
+        options.appendChild(button);
+    });
+
+    document.getElementById("explanation").classList.remove("show");
+    document.getElementById("nextButton").disabled = true;
+    document.getElementById("nextButton").textContent = "정답을 선택해주세요";
+}
+
+function checkAnswer(selectedIndex, selectedButton) {
+    if (answered) return;
+    answered = true;
+
+    const question = quizQuestions[currentQuestion];
+    const buttons = document.querySelectorAll(".option");
+    buttons.forEach(button => button.classList.add("disabled"));
+
+    const subject = question.subject || currentSubject;
+
+    if (selectedIndex === question.answer) {
+        selectedButton.classList.add("correct");
+        score++;
+        studyData.correct++;
+        if (studyData.subjects[subject]) studyData.subjects[subject].correct++;
+
+        document.getElementById("answerStatus").textContent = "⭕ 정답이에요!";
+        document.getElementById("answerStatus").className = "answer-status correct-text";
+    } else {
+        selectedButton.classList.add("wrong");
+        if (buttons[question.answer]) buttons[question.answer].classList.add("correct");
+        saveWrongQuestion(question);
+
+        document.getElementById("answerStatus").textContent = "❌ 아쉬워요!";
+        document.getElementById("answerStatus").className = "answer-status wrong-text";
+    }
+
+    if (studyData.subjects[subject]) studyData.subjects[subject].solved++;
+    studyData.solved++;
+    if (currentMode === "daily") studyData.dailySolved++;
+
+    saveStudyData();
+
+    document.getElementById("explanationText").textContent = question.explanation;
+    document.getElementById("explanation").classList.add("show");
+
+    const nextButton = document.getElementById("nextButton");
+    nextButton.disabled = false;
+    nextButton.textContent = (currentQuestion === quizQuestions.length - 1) ? "결과 보기" : "다음 문제 →";
+}
+
+function saveWrongQuestion(question) {
+    const subject = question.subject || currentSubject;
+    const exists = studyData.wrongQuestions.some(
+        item => item.subject === subject && item.question.question === question.question
+    );
+    if (!exists) {
+        studyData.wrongQuestions.push({
+            subject: subject,
+            question: {
+                question: question.question,
+                options: [...question.options],
+                answer: question.answer,
+                explanation: question.explanation
+            }
+        });
+    }
+}
+
+function nextQuestion() {
+    if (!answered) return;
+    if (currentQuestion >= quizQuestions.length - 1) {
+        showResult();
+        return;
+    }
+    currentQuestion++;
+    showQuestion();
+}
+
+function showResult() {
+    hideAllScreens();
+    document.getElementById("resultScreen").classList.add("active");
+
+    const total = quizQuestions.length;
+    document.getElementById("resultScore").textContent = `${score} / ${total}`;
+
+    const percentage = Math.round((score / total) * 100);
+    let message = "";
+    if (percentage === 100) message = "완벽해요! 🎉";
+    else if (percentage >= 80) message = "정말 잘했어요! 👏";
+    else if (percentage >= 60) message = "조금만 더 복습해봐요! 💪";
+    else message = "오답노트로 다시 공부해봐요! 📚";
+
+    if (currentMode === "daily") message = `오늘의 5문제를 완료했어요! ${message}`;
+    document.getElementById("resultMessage").textContent = message;
+    updateHome();
+}
+
+function retryQuiz() {
+    if (currentMode === "daily") {
+        startDailyQuiz();
+        return;
+    }
+    startQuiz(currentMode);
+}
+
+function exitQuiz() {
+    if (confirm("퀴즈를 그만두고 홈으로 돌아갈까요?")) {
+        currentQuestion = 0;
+        score = 0;
+        quizQuestions = [];
+        answered = false;
+        goHome();
+    }
+}
+
+/* =========================================================================
+   오답노트 및 MY 페이지 업데이트
+========================================================================= */
+function showWrongNotebook() {
+    hideAllScreens();
+    wrongFilter = "all";
+    document.getElementById("wrongScreen").classList.add("active");
+    updateWrongTabs();
+    renderWrongNotebook();
+}
+
+function setWrongFilter(filter) {
+    wrongFilter = filter;
+    updateWrongTabs();
+    renderWrongNotebook();
+}
+
+function updateWrongTabs() {
+    const keys = ["all", ...SUBJECTS.map(s => s.key)];
+    keys.forEach(k => {
+        const el = document.getElementById("wrongTab_" + k);
+        if (el) el.classList.toggle("active", wrongFilter === k);
+    });
+}
+
+function renderWrongNotebook() {
+    const list = document.getElementById("wrongList");
+    let wrongQuestions = studyData.wrongQuestions;
+
+    if (wrongFilter !== "all") {
+        wrongQuestions = wrongQuestions.filter(item => item.subject === wrongFilter);
+    }
+
+    if (wrongQuestions.length === 0) {
+        list.innerHTML = `<div class="empty"><div class="empty-icon">📭</div><div>아직 오답 문제가 없어요.</div></div>`;
+        return;
+    }
+
+    list.innerHTML = "";
+    wrongQuestions.forEach(item => {
+        const card = document.createElement("div");
+        card.className = "wrong-card";
+        const origIdx = studyData.wrongQuestions.indexOf(item);
+
+        card.innerHTML = `
+            <div class="wrong-subject">${getSubjectLabel(item.subject)}</div>
+            <div class="wrong-question">${item.question.question}</div>
+            <div class="wrong-answer">
+                <strong>정답:</strong> ${item.question.answer + 1}번 · ${item.question.options[item.question.answer]}<br><br>
+                <strong>해설:</strong> ${item.question.explanation}
+            </div>
+            <button class="remove-wrong" onclick="removeWrongQuestion(${origIdx})">
+                ✓ 복습 완료 · 오답에서 삭제
+            </button>
+        `;
+        list.appendChild(card);
+    });
+}
+
+function removeWrongQuestion(index) {
+    studyData.wrongQuestions.splice(index, 1);
+    saveStudyData();
+    renderWrongNotebook();
+    showToast("오답노트에서 삭제했어요.");
+}
+
+function showMyPage() {
+    hideAllScreens();
+    document.getElementById("myScreen").classList.add("active");
+    updateMyPage();
+}
+
+function updateMyPage() {
+    const solved = studyData.solved;
+    const correct = studyData.correct;
+
+    document.getElementById("totalSolved").textContent = solved;
+    document.getElementById("totalCorrect").textContent = correct;
+    const accuracy = solved === 0 ? 0 : Math.round((correct / solved) * 100);
+    document.getElementById("accuracy").textContent = accuracy + "%";
+
+    SUBJECTS.forEach(s => {
+        const data = studyData.subjects[s.key] || { solved: 0, correct: 0 };
+        const total = getSubjectQuestions(s.key).length;
+        const prog = total === 0 ? 0 : Math.min(100, Math.round((data.solved / total) * 100));
+        const acc = data.solved === 0 ? 0 : Math.round((data.correct / data.solved) * 100);
+
+        document.getElementById("myAccuracy_" + s.key).textContent = acc + "%";
+        document.getElementById("myProgress_" + s.key).style.width = prog + "%";
+        document.getElementById("myText_" + s.key).textContent = `${data.solved} / ${total} 문제`;
+    });
+}
+
+function updateHome() {
+    SUBJECTS.forEach(s => {
+        const data = studyData.subjects[s.key] || { solved: 0, correct: 0 };
+        const total = getSubjectQuestions(s.key).length;
+        const progress = total === 0 ? 0 : Math.min(100, Math.round((data.solved / total) * 100));
+
+        const bar = document.getElementById(s.key + "Progress");
+        const txt = document.getElementById(s.key + "ProgressText");
+        if (bar) bar.style.width = progress + "%";
+        if (txt) txt.textContent = progress + "%";
+    });
+
+    const today = new Date().toISOString().slice(0, 10);
+    if (studyData.dailyDate !== today) {
+        studyData.dailyDate = today;
+        studyData.dailySolved = 0;
+        saveStudyData();
+    }
+
+    const daily = Math.min(5, studyData.dailySolved);
+    document.getElementById("dailyCount").textContent = `${daily} / 5`;
+    document.getElementById("dailyBarFill").style.width = ((daily / 5) * 100) + "%";
+}
+
+function searchSubjects() {
+    const keyword = document.getElementById("searchInput").value.toLowerCase().trim();
+    document.querySelectorAll(".subject-card").forEach(card => {
+        const name = card.dataset.name.toLowerCase();
+        card.style.display = name.includes(keyword) ? "block" : "none";
+    });
+}
+
+function saveStudyData() {
+    localStorage.setItem("labQStudyData", JSON.stringify(studyData));
+}
+
+function resetAllData() {
+    if (!confirm("모든 학습 기록과 오답노트를 삭제할까요?")) return;
+    studyData = createDefaultStudyData();
+    saveStudyData();
+    updateMyPage();
+    updateHome();
+    showToast("학습 기록을 초기화했어요.");
+}
+
+function showToast(message) {
+    const toast = document.getElementById("toast");
+    toast.textContent = message;
+    toast.classList.add("show");
+    setTimeout(() => toast.classList.remove("show"), 1800);
+}
+
+// 앱 시작
+initDynamicUI();
+updateHome();
+</script>
+
+</body>
+</html>
